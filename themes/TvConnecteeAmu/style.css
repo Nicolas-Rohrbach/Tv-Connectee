@@ -6,7 +6,7 @@
     Licence: GNU General Public License v2 ou ultérieure
     Licence URI: http://www.gnu.org/licenses/gpl-2.0.html
     Author: Nicolas Rohrbach
-    TvConnecteeAmu by Nicolas Rohrbach|| http://www.tvconnectee.com
+    TvConnecteeAmu by Nicolas Rohrbach|| http://www.tvconnectee.alwaysdata.net
     Tags: bootstrap, une colonne, deux colonnes, barre latérale droite, en-tête flexible, prêt pour l'accessibilité, couleurs personnalisées, en-tête personnalisé, logo personnalisé, widgets de pied de page, options de thème
 */
 
@@ -161,4 +161,90 @@ form button{
 
 .inpFil {
     color: #000000;
+}
+
+@media (max-width: 640px) {
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        width: auto;
+        margin: 0;
+        padding: 0;
+    }
+
+    #content {
+        margin-right: 5%;
+        margin-left: 5%;
+    }
+
+    #content-twocolumns {
+        width: 90%;
+        margin-right: 5%;
+        margin-left: 5%;
+    }
+
+    img,
+    table,
+    td,
+    blockquote,
+    code,
+    pre,
+    textarea,
+    input,
+    iframe,
+    object,
+    embed,
+    video {
+        max-width: 100%;
+    }
+
+    table{
+        font-size: 80%;
+    }
+
+    img {
+        height: auto;
+    }
+
+    textarea,
+    table,
+    td,
+    th,
+    code,
+    pre,
+    samp {
+        -webkit-hyphens: auto; /* césure propre */
+        -moz-hyphens: auto;
+        hyphens: auto;
+        word-wrap: break-word; /* passage à la ligne forcé */
+    }
+
+    code,
+    pre,
+    samp {
+        white-space: pre-wrap; /* passage à la ligne spécifique pour les éléments à châsse fixe */
+    }
+
+    /* Passer à une seule colonne (à appliquer aux éléments multi-colonnes) */
+
+    .element1,
+    .element2 {
+        float: none;
+        width: auto;
+    }
+
+    /* masquer les éléments superflus */
+
+    .hide_mobile {
+        display: none !important;
+    }
+}
+
+@media (max-device-width:768px) and (orientation: landscape) {
+    html {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+    }
 }

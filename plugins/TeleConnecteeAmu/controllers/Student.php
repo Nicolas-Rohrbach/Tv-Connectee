@@ -73,21 +73,42 @@ class Student extends ControllerG
                         $login = $cells[0];
                         $email = $cells[1];
                         $codes = [$cells[2], $cells[3], $cells[4]];
-                        if($this->model->insertStudent($login, $hashpass, $email, $codes)){
-                            foreach ($codes as $code){
-                                $path = $this->getFilePath($code);
-                                if(! file_exists($path))
-                                    $this->addFile($code);
+                        if(isset($login) && isset($email)) {
+                            if($this->model->insertStudent($login, $hashpass, $email, $codes)){
+                                foreach ($codes as $code){
+                                    $path = $this->getFilePath($code);
+                                    if(! file_exists($path))
+                                        $this->addFile($code);
+                                }
+
+                                $to  = $email;
+                                $subject = "Inscription à la télé-connecté";
+                                $message = '
+                                 <html>
+                                  <head>
+                                   <title>Inscription à la télé-connecté</title>
+                                  </head>
+                                  <body>
+                                   <p>Bonjour, vous avez été inscrit sur le site de la Télé Connecté de votre département en tant qu\'étudiant</p>
+                                   <p> Sur ce site, vous aurez accès à votre emploie du temps, à vos notes et aux informations concernant votre scolarité.</p>
+                                   <p> Votre identifiant est '.$login.' et votre mot de passe est '.$pwd.'.</p>
+                                   <p> Veuillez changer votre mot de passe lors de votre première connexion pour plus de sécurité !</p>
+                                   <p> Pour vous connecter, rendez-vous sur le site : <a href="'.home_url().'">.</p>
+                                   <p> Nous vous souhaitons une bonne expérience sur notre site.</p>
+                                  </body>
+                                 </html>
+                                 ';
+
+                                // Pour envoyer un mail HTML, l'en-tête Content-type doit être défini
+                                $headers[] = 'MIME-Version: 1.0';
+                                $headers[] = "Content-Type: text/html; charset=UTF-8";
+
+                                // Envoi
+                                mail($to, $subject, $message, implode("\n", $headers));
                             }
-                            $message = "Bonjour, vous avez été inscrit sur le site de la Télé Connecté de votre département en temps qu'étudiant.\n";
-                            $message1 = $message."Sur ce site, vous aurez accès à votre emploie du temps, à vos notes et aux informations concernant votre scolarité. \n" ;
-                            $message2 = $message1 . "Votre identifiant est " . $login . " et votre mot de passe est " . $pwd. "\n";
-                            $message3 = $message2 . "Pour vous connecter, rendez vous sur le site : ".home_url().". \n";
-                            $message4 = $message3."Nous vous souhaitons une bonne expérience sur notre site." ;
-                            mail($email, "Inscription à la télé-connecté", $message4);
-                        }
-                        else {
-                            array_push($doubles, $cells[0]);
+                            else {
+                                array_push($doubles, $cells[0]);
+                            }
                         }
                     }
                     if(! is_null($doubles[0])) {

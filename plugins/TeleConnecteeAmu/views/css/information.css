@@ -1,9 +1,9 @@
 /*__Information main__*/
 
 .titleInfo {
-    max-width: 100%;
-    font-size : 3em;
-    text-align: center;
+    font-family: "Titillium Web", sans-serif;
+    font-style: normal;
+    font-weight: 400;
 }
 
 .content_info{
@@ -13,8 +13,10 @@
 }
 
 .content_info img{
-    max-height:35ex;
+    max-height:30ex;
 }
+
+
 
 @media (max-height: 1100px) {
     .titleInfo {
@@ -30,7 +32,7 @@
     }
 
     .content_info img{
-        max-height:45ex;
+        max-height:40ex;
     }
 }
 

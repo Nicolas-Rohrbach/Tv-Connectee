@@ -8,18 +8,47 @@
 
 class ViewAlert extends ViewG
 {
+
+    public function displaySelect($years, $groups, $halfgroups){
+        echo '<option value="0">Aucun</option>
+              <option value="all">Tous</option>
+                        <optgroup label="Année">';
+        foreach ($years as $year) {
+
+            echo '<option value="'.$year['code'].'">'.$year['title'].'</option >';
+        }
+        echo '</optgroup>
+                          <optgroup label="Groupe">';
+        foreach ($groups as $group){
+            echo '<option value="'.$group['code'].'">'.$group['title'].'</option>';
+        }
+        echo '</optgroup>
+                          <optgroup label="Demi groupe">';
+        foreach ($halfgroups as $halfgroup){
+            echo '<option value="'.$halfgroup['code'].'">'.$halfgroup['title'].'</option>';
+        }
+        echo '</optgroup>
+        </select>';
+    }
+
     /**
      * Display the creation form.
      */
-    public function displayAlertCreationForm() {
+    public function displayAlertCreationForm($years, $groups, $halfgroups) {
         $dateMin = date('Y-m-d',strtotime("+1 day")); //date minimum pour la date d'expiration
 
         echo '
+        <div class="cadre">
             <form id="creationAlert" method="post">
-                   Contenu : <input type="text" name="content" required maxlength="140"> <br>
+                   Contenu : <input type="text" name="content" required maxlength="280"> <br>
                    Date d\'expiration : <input type="date" name="endDateAlert" min="'.$dateMin.'" required > </br>
+                    <select class="form-control firstSelect" name="selectAlert[]" required="">';
+                        $this->displaySelect($years, $groups, $halfgroups);
+        echo'
+                <input type="button" onclick="addButtonAlert()" value="Ajouter">
                     <input type="submit" value="Créer" name="createAlert">
             </form>
+        </div> 
         ';
     } //displayCreationForm();
 
@@ -61,7 +90,7 @@ class ViewAlert extends ViewG
                     
                     <form id="modify_alert" method="post">
                   
-                      Contenu : <textarea name="contentInfo" maxlength="140">' . $content . '</textarea> </br>
+                      Contenu : <textarea name="contentInfo" maxlength="280">' . $content . '</textarea> </br>
                       Date d\'expiration : <input type="date" name="endDateInfo" min="' . $dateMin . '" value = "' . $endDate . '" required > </br>
                       
                          <input type="submit" name="validateChange" value="Valider" ">

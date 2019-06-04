@@ -97,7 +97,8 @@ abstract class Model
             $req->execute();
 
             $capa = 'wp_capabilities';
-            $role = 'a:1:{s:10:"'.$role.'";b:1;}';
+            $size = strlen($role);
+            $role = 'a:1:{s:'.$size.':"'.$role.'";b:1;}';
 
             $id = $this->getDb()->lastInsertId();
 
@@ -152,6 +153,17 @@ abstract class Model
     public function getUsersByRole($role){
         $req = $this->getDb()->prepare('SELECT * FROM wp_users WHERE role = :role');
         $req->bindParam(':role', $role);
+        $req->execute();
+        while ($data = $req->fetch()) {
+            $var[] = $data;
+        }
+        return $var;
+        $req->closeCursor();
+    }
+
+    public function getUserByLogin($login){
+        $req = $this->getDb()->prepare('SELECT * FROM wp_users WHERE user_login = :login');
+        $req->bindParam(':login', $login);
         $req->execute();
         while ($data = $req->fetch()) {
             $var[] = $data;

@@ -49,7 +49,7 @@ class ViewInformation extends ViewG
         $cpt = 0;
         echo '<div class="container-fluid">
                     <div id="information_carousel">
-                        <div id="demo" class="carousel slide" data-ride="carousel">
+                        <div id="demo" class="carousel slide" data-ride="carousel" data-interval="10000">
                             
                             <!--The slides -->
                             <div class="carousel-inner">';
@@ -169,8 +169,4 @@ class ViewInformation extends ViewG
             echo 'Désolé, une erreur semble être survenue.';
         }
     } //displayModifyInformationForm()
-
-
-
-
 }

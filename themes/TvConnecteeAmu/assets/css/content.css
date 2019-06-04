@@ -5,11 +5,11 @@
 
 
 #content {
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 5%;
+    margin-right: 5%;
     text-align: center;
     color: black;
-    width: 80%;
+    width: 90%;
 }
 
 #content-twocolumns{
@@ -74,6 +74,8 @@ input[type=button], input[type=submit], input[type=reset], button {
 
 .tablesize {
     width: 100% !important;
+    max-height: 30ex;
+    font-size: smaller;
 }
 
 .postmetadata {

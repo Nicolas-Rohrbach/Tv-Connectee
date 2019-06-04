@@ -49,16 +49,16 @@ $years = $model->getCodeYear();?>
                 <div class="menu-item_dropdown-content">
                     <a href="/creer-information">Créer une information</a>
                     <a href="/gerer-les-informations">Gestion des informations</a>
+                </div>
+                </div>
                 <?php } ?>
-            </div>
-        </div>
         <?php if ($current_user->role == "secretaire" || $current_user->role == "administrator") { ?>
             <a class="menu-item" href="/gestion-codes-ade/"> CODES ADE</a>
         <?php }
     } ?>
     <a class="menu-item" href="/mon-compte">MON COMPTE</a>
     <a class="menu-item" href="<?php echo wp_logout_url(); ?>">DÉCONNEXION</a>
-        <a href="javascript:void(0);" style="font-size:60px;" class="icon" onclick="switchMenu()">&#9776;</a>
+        <a href="javascript:void(0);" style="font-size:30px;" class="icon" onclick="switchMenu()">&#9776;</a>
     <?php } ?>
 </div>
 <?php } else {?>

@@ -45,10 +45,15 @@ class Alert
      * @param $endDate
      */
     public function createAlert($action, $content, $endDate){
+        $years = $this->DB->getCodeYear();
+        $groups = $this->DB->getCodeGroup();
+        $halfgroups = $this->DB->getCodeHalfgroup();
 
-        $this->view->displayAlertCreationForm();
+        $this->view->displayAlertCreationForm($years, $groups, $halfgroups);
         if(isset($action)) {
-            $this->DB->addAlertDB($content, $endDate);
+            $codes = serialize($_POST['selectAlert']);
+
+            $this->DB->addAlertDB($content, $endDate, $codes);
         }
     } //createAlert()
 

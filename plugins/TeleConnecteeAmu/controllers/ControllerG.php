@@ -24,11 +24,26 @@ abstract class ControllerG {
      */
     public function deleteUsers($action){
         $model = new StudentManager();
+        $modelAlert = new AlertManager();
+        $modelInfo = new InformationManager();
         if(isset($action)){
             if(isset($_REQUEST['checkboxstatus'])) {
                 $checked_values = $_REQUEST['checkboxstatus'];
                 foreach($checked_values as $val) {
                     $model->deleteUser($val);
+                    $result = $model->getById($val);
+                    $alerts = $modelAlert->getListAlertByAuthor($result[0]['user_login']);
+                    if(isset($alerts)){
+                        foreach ($alerts as $alert) {
+                            $modelAlert->deleteAlertDB($alert['ID_alert']);
+                        }
+                    }
+                    $infos = $modelInfo->getListInformationByAuthor($result[0]['user_login']);
+                    if(isset($infos)){
+                        foreach ($infos as $info) {
+                            $modelInfo->deleteInformationDB($info['ID_info']);
+                        }
+                    }
                 }
             }
         }

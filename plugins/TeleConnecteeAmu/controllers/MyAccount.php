@@ -75,9 +75,8 @@ class MyAccount extends ControllerG {
                 if($current_user->role == 'enseignant')
                     $code = unserialize($current_user->code);
                 unlink($this->getFilePath($code[0]));
-                require_once( ABSPATH.'wp-admin/includes/user.php' );
                 $this->model->deleteCode($current_user->ID);
-                wp_delete_user( $current_user->ID);
+                $this->deleteUsers($actionDelete);
                 $this->view->displayModificationValidate();
             }
             else{

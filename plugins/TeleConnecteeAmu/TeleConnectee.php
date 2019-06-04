@@ -150,6 +150,7 @@ function wpdocs_plugin_teleconnecteeAmu_scripts() {
     wp_enqueue_script( 'theme-jqueryEzTic', '/wp-content/plugins/TeleConnecteeAmu/views/js/jquery.easy-ticker.js', array ( 'jquery' ), '', false);
     wp_enqueue_script( 'plugin-addCheckBox', '/wp-content/plugins/TeleConnecteeAmu/views/js/addAllCheckBox.js', array ( 'jquery' ), '', false);
     wp_enqueue_script( 'plugin-addCodeTv', '/wp-content/plugins/TeleConnecteeAmu/views/js/addOrDeleteTvCode.js', array ( 'jquery' ), '', false);
+    wp_enqueue_script( 'plugin-addCodeAlert', '/wp-content/plugins/TeleConnecteeAmu/views/js/addOrDeleteAlertCode.js', array ( 'jquery' ), '', false);
     wp_enqueue_script( 'plugin-marquee', '/wp-content/plugins/TeleConnecteeAmu/views/js/jquery.marquee.js', array ( 'jquery' ), '', false);
     wp_enqueue_script( 'plugin-weather', '/wp-content/plugins/TeleConnecteeAmu/views/js/weather.js', array ( 'jquery' ), '', false);
     wp_enqueue_script( 'plugin-slideshow', '/wp-content/plugins/TeleConnecteeAmu/views/js/slideshow.js', array ( 'jquery' ), '', true);

@@ -37,15 +37,19 @@ class ViewStudent extends ViewG
 
     public function displayModifyStudent($result, $years, $groups, $halfgroups){
         $code = unserialize($result['code']);
+        $model = new CodeAdeManager();
+        $titleYear = $model->getTitle($code[0]);
+        $titleGroup = $model->getTitle($code[1]);
+        $titleHalfgroup = $model->getTitle($code[2]);
         echo '
 <div class="cadre">
          <h3>'.$result['user_login'].'</h3>
          <form method="post">
             <label>Année</label>
             <select class="form-control" name="modifYear">
+                <option value="'.$code[0].'">'.$titleYear.'</option>
                 <option value="0">Aucun</option>
                 <optgroup label="Année">
-                <option>'.$code[0].'</option>
             ';
         $selected = $_POST['modifYear'];
         foreach ($years as $year) {
@@ -56,9 +60,9 @@ class ViewStudent extends ViewG
             </select>
             <label>Groupe</label>
             <select class="form-control" name="modifGroup">
+                <option value="'.$code[1].'">'.$titleGroup.'</option>
                 <option value="0">Aucun</option>
-                <optgroup label="Groupe">
-                <option>'.$code[1].'</option>';
+                <optgroup label="Groupe">';
         $selected = $_POST['modifGroup'];
         foreach ($groups as $group){
             echo'<option value="'.$group['code'].'"'; if($group['code'] == $selected) echo "selected"; echo'>'.$group['title'].'</option>';
@@ -68,9 +72,9 @@ class ViewStudent extends ViewG
             </select>
             <label>Demi-groupe</label>
             <select class="form-control" name="modifHalfgroup">
+                <option value="'.$code[2].'">'.$titleHalfgroup.'</option>
                 <option value="0"> Aucun</option>
-                <optgroup label="Demi-Groupe">
-                <option>'.$code[2].'</option>';
+                <optgroup label="Demi-Groupe">';
         $selected = $_POST['modifHalfgroup'];
         foreach ($halfgroups as $halfgroup){
             echo'<option value="'.$halfgroup['code'].'"'; if($halfgroup['code'] == $selected) echo "selected"; echo'>'.$halfgroup['title'].'</option>';

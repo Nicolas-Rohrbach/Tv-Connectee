@@ -23,6 +23,7 @@ abstract class ViewG{
         echo '
             <h1>'.$title.'</h1>
             <form method="post">
+                <div class="table-responsive">
                 <table class="table text-center"> 
                 <thead>
                     <tr class="text-center">
@@ -76,6 +77,7 @@ abstract class ViewG{
         echo'
           </tbody>
         </table>
+        </div>
         <input type="submit" value="Supprimer" name="Delete"/>
         </form>';
     }
