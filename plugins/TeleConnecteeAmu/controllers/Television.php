@@ -40,7 +40,7 @@ class Television extends ControllerG{
             $pwd = md5(filter_input(INPUT_POST,'pwdTv'));
             $codes = $_POST['selectTv'];
             if($this->model->insertMyTelevision($login, $pwd, $codes)){
-                $this->view->refreshPage();
+                $this->view->displayInsertValidate();
             }
             else{
                 $this->view->displayErrorLogin();
@@ -83,13 +83,13 @@ class Television extends ControllerG{
 
         if(isset($action)){
             $codes = $_POST['selectTv'];
-            $pwd = $_POST['pwdTv'];
-            $pwd = wp_hash_password($pwd);
-            if(empty($pwd)){
-                $pwd = $result['user_pass'];
+            $pwd = $result['user_pass'];
+            if(isset($_POST['pwdTv'])){
+                $pwd = $_POST['pwdTv'];
             }
-            if($this->model->modifyTv($result, $pwd, $codes)){
-                $this->view->refreshPage();
+            if($this->model->modifyTv($result, $codes)){
+                wp_set_password( $pwd, $result['ID']);
+                $this->view->displayModificationValidate();
             }
         }
     }

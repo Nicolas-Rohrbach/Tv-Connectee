@@ -61,9 +61,6 @@ include_once 'models/AlertManager.php';
 include_once 'views/ViewAlert.php';
 include_once 'widgets/WidgetAlert.php';
 
-define('ROOT', dirname(__FILE__));
-require_once(ROOT . '/controllers/fileSchedule/app/app.php');
-
 require ('models/Excel/vendor/autoload.php');
 
 //Users
@@ -84,10 +81,6 @@ $schedule = new Schedule();
 //Function for Schedule
 add_action('displaySchedule',array($schedule,'displaySchedules'));
 add_action('displayYear_schedule', array($schedule, 'displayYearSchedule'));
-
-$weather = new Weather();
-//Function for Weather
-//add_action('display_weather', array($weather,'displayWeather'));
 
 //All functions for users
 add_action('add_student', array($student, 'insertStudent'), 0, 1);
@@ -117,14 +110,13 @@ add_action('createAlert',array($alert,'createAlert'),0,3);
 add_action('handleAlert', array($alert,'alertsManagement'));
 add_action('delete_alert', array($alert,'deleteAlert'), 0 ,1);
 add_action('modify_alert',array($alert,'modifyAlert'));
-//add_action('display_alert', array($alert, 'alertMain'));
 
+add_action('test', array($alert,'test'));
 // Initialize plugin
 add_action('init', function(){
     global $R34ICS;
     $R34ICS = new R34ICS();
 });
-
 
 add_action( 'downloadFileICS', 'downloadFileICS_func' );
 function downloadFileICS_func() {
@@ -152,8 +144,8 @@ function wpdocs_plugin_teleconnecteeAmu_scripts() {
     wp_enqueue_script( 'plugin-addCodeTv', '/wp-content/plugins/TeleConnecteeAmu/views/js/addOrDeleteTvCode.js', array ( 'jquery' ), '', false);
     wp_enqueue_script( 'plugin-addCodeAlert', '/wp-content/plugins/TeleConnecteeAmu/views/js/addOrDeleteAlertCode.js', array ( 'jquery' ), '', false);
     wp_enqueue_script( 'plugin-marquee', '/wp-content/plugins/TeleConnecteeAmu/views/js/jquery.marquee.js', array ( 'jquery' ), '', false);
-    wp_enqueue_script( 'plugin-weather', '/wp-content/plugins/TeleConnecteeAmu/views/js/weather.js', array ( 'jquery' ), '', false);
     wp_enqueue_script( 'plugin-slideshow', '/wp-content/plugins/TeleConnecteeAmu/views/js/slideshow.js', array ( 'jquery' ), '', true);
+    wp_enqueue_script( 'plugin-showModal', '/wp-content/plugins/TeleConnecteeAmu/views/js/modal.js', array ( 'jquery' ), '', true);
     wp_enqueue_script( 'plugin-ticker', '/wp-content/plugins/TeleConnecteeAmu/views/js/jquery.tickerNews.js', array ( 'jquery' ), '', true);
     wp_enqueue_script( 'plugin-alertTicker', '/wp-content/plugins/TeleConnecteeAmu/views/js/alertTicker.js', array ( 'jquery' ), '', true);
 }

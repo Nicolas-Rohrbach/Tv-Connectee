@@ -11,7 +11,7 @@ class ViewManagementUsers extends ViewG
     public function displayButtonChoise(){
         echo '
         <form method="post">
-          <label for="students">Etudiants</label>
+          <label for="students">Étudiants</label>
           <input type="radio" name="seeUsers" id="students" value="students">
           <label for="teachers">Enseignants</label>
           <input type="radio" name="seeUsers" id="teachers" value="teachers">

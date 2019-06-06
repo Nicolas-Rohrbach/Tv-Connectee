@@ -1,6 +1,6 @@
-<?php /* Template Name: Colonne droite */
+<?php /* Template Name: Colonne droite */ ?>
 
-get_header(); ?>
+<?php get_header(); ?>
 <div id="content-twocolumns">
     <?php if(have_posts()) :
         while(have_posts()) : the_post(); ?>

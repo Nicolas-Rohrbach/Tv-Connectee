@@ -65,7 +65,8 @@ class Alert
 
         $current_user = wp_get_current_user();
         $user = $current_user->user_login;
-        $result = $this->DB->getListAlertByAuthor($user);
+        if($current_user->role == 'administrator') $result = $this->DB->getListAlert();
+        else $result = $this->DB->getListAlertByAuthor($user);
 
         $this->view->tabHeadAlert();
         $i = 0;
@@ -79,8 +80,11 @@ class Alert
 
             $this->endDateCheckAlert($id, $endDate);
 
+            // change l'affichage de la date en français (jour-mois-année)
+            $endDatefr = date("d-m-Y", strtotime($endDate));
+            $creationDatefr = date("d-m-Y", strtotime($creationDate));
 
-            $this->view->displayAllAlert($id, $author, $content, $creationDate, $endDate, ++$i);
+            $this->view->displayAllAlert($id, $author, $content, $creationDatefr, $endDatefr, ++$i);
         }
         $this->view->displayEndTab();
     } //alertManagement()
@@ -103,21 +107,26 @@ class Alert
      */
     public function modifyAlert()
     {
+        $years = $this->DB->getCodeYear();
+        $groups = $this->DB->getCodeGroup();
+        $halfgroups = $this->DB->getCodeHalfgroup();
+
         $urlExpl = explode('/', $_SERVER['REQUEST_URI']);
         $id = $urlExpl[2];
 
         $action = filter_input(INPUT_POST,'validateChange');
 
         $result = $this->DB->getAlertByID($id);
-        $content = $result['text'];
-        $endDate = date('Y-m-d', strtotime($result['end_date']));
-        $this->view->displayModifyAlertForm($content, $endDate);
+
+
+        $this->view->displayModifyAlertForm($result,$years, $groups,$halfgroups);
 
         if ($action == "Valider") {
             $content = filter_input(INPUT_POST,'contentInfo');
             $endDate = filter_input(INPUT_POST,'endDateInfo');
+            $codes = $_POST['selectAlert'];
 
-            $this->DB->modifyAlert($id, $content, $endDate);
+            $this->DB->modifyAlert($id, $content, $endDate, $codes);
             $this->view->refreshPage();
         }
     } //modifyAlert()
@@ -128,25 +137,57 @@ class Alert
      *cf snippet Display Alert
      */
     public function alertMain(){
+        // Recuperation des codes de l'utilisateur
+        $current_user = wp_get_current_user();
+        $codesUserList = array();
+        if ($current_user->roles[0] == "television" || $current_user->roles[0] == "etudiant" || $current_user->roles[0] == "enseignant") {
+            $codes = unserialize($current_user->code);
+            if(is_array($codes)){
+                foreach ($codes as $code) {
+                    array_push($codesUserList,$code);
+                }
+            } else {
+                array_push($codesUserList, $codes);
+            }
 
+            array_push($codesUserList, 'all'); // Pour avoir les alertes concerné par tous
+        }
+
+        //Ajoute dans une liste les alertes avec le même code que l'utilisateur
         $result = $this->DB->getListAlert();
-
-        $contentList = array();
-
+        $alertIDList = array();
         foreach ($result as $row) {
-
+            $alertCodes = unserialize($row['codes']);
             $id = $row['ID_alert'];
-            $content = $row['text'];
-            $endDate = date('Y-m-d',strtotime($row['end_date']));
-
-            $this->endDateCheckAlert($id,$endDate);
-
-            $content .= "&emsp;&emsp;&emsp;&emsp;";
-            array_push($contentList,$content) ;
+            if($current_user->roles[0] == 'administrator' || $current_user->roles[0] == 'secretaire' ) {
+                array_push($alertIDList,$id);
+            } else {
+                foreach ($alertCodes as $code){
+                    if(in_array($code, $codesUserList)) {
+                        array_push($alertIDList,$id);
+                    }
+                }
+            }
         }
 
 
+        $alertIDList = array_unique($alertIDList); //retire les doublons
+        $contentList = array();
+        foreach ($alertIDList as $id){
+            $result = $this->DB->getAlertByID($id);
+            $content = $result['text'];
+            $endDate = date('Y-m-d',strtotime($result['end_date']));
+
+            $this->endDateCheckAlert($id,$endDate); //verifie si l'alerte est depassé
+
+            $content .= "&emsp;&emsp;&emsp;&emsp;";
+            array_push($contentList, $content);
+        }
         $this->view->displayAlertMain($contentList);
 
     } // alertMain()
+
+    public function test(){
+      echo 'bienvenue sur la page de test';
+    }
 }

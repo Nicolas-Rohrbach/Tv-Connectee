@@ -1,5 +1,4 @@
 <?php /* Template Name: Les 2 colonnes */ ?>
-
 <?php get_header(); ?>
 <?php if (! wp_is_mobile() ) {
     get_sidebar('left');

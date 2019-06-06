@@ -74,10 +74,10 @@ abstract class Model
 
     protected function insertUser($login, $pwd, $role, $email, $code = array()){
         if ($this->verifyNoDouble($email, $login)){
-            $req = $this->getDb()->prepare('INSERT INTO wp_users (user_login, user_pass, role, code,
+            $req = $this->getDb()->prepare('INSERT INTO wp_users (user_login, user_pass, code,
                                       user_nicename, user_email, user_url, user_registered, user_activation_key,
                                       user_status, display_name) 
-                                         VALUES (:login, :pwd, :role, :code, :name, :email, :url, NOW(), :key, :status, :displayname)');
+                                         VALUES (:login, :pwd, :code, :name, :email, :url, NOW(), :key, :status, :displayname)');
 
             $nul = " ";
             $zero = "0";
@@ -85,7 +85,6 @@ abstract class Model
             $serCode = serialize($code);
             $req->bindParam(':login', $login);
             $req->bindParam(':pwd', $pwd);
-            $req->bindParam(':role', $role);
             $req->bindParam(':code', $serCode);
             $req->bindParam(':name', $login);
             $req->bindParam(':email', $email);
@@ -127,19 +126,14 @@ abstract class Model
         }
     }
 
-    protected function modifyUser($id, $login, $pwd, $email, $codes){
+    protected function modifyUser($id, $login, $codes){
         if ($this->verifyTuple($login)) {
-            $req = $this->getDb()->prepare('UPDATE wp_users SET user_login=:login, user_pass=:pwd, code=:codes, user_nicename=:name, 
-                                            user_email=:email, display_name=:displayname WHERE ID=:id');
+            $req = $this->getDb()->prepare('UPDATE wp_users SET code=:codes
+                                            WHERE ID=:id');
 
             $serCode = serialize($codes);
             $req->bindParam(':id', $id);
-            $req->bindParam(':login', $login);
-            $req->bindParam(':pwd', $pwd);
             $req->bindParam(':codes', $serCode);
-            $req->bindParam(':name', $login);
-            $req->bindParam(':email', $email);
-            $req->bindParam(':displayname', $login);
 
             $req->execute();
 
@@ -151,8 +145,11 @@ abstract class Model
     }
 
     public function getUsersByRole($role){
-        $req = $this->getDb()->prepare('SELECT * FROM wp_users WHERE role = :role');
-        $req->bindParam(':role', $role);
+        $req = $this->getDb()->prepare('SELECT * FROM wp_users user, wp_usermeta meta WHERE user.ID = meta.user_id AND meta.meta_value =:role 
+                                        ORDER BY user.code, user.user_login');
+        $size = strlen($role);
+        $meta = 'a:1:{s:'.$size.':"'.$role.'";b:1;}';
+        $req->bindParam(':role', $meta);
         $req->execute();
         while ($data = $req->fetch()) {
             $var[] = $data;
@@ -184,7 +181,7 @@ abstract class Model
     }
 
     public function getCodeYear(){
-        $req = $this->getDb()->prepare('SELECT * FROM code_ade WHERE type = "Annee"');
+        $req = $this->getDb()->prepare('SELECT * FROM code_ade WHERE type = "Annee" ORDER BY title');
         $req->execute();
         while ($data = $req->fetch()) {
             $var[] = $data;
@@ -194,7 +191,7 @@ abstract class Model
     }
 
     public function getCodeGroup(){
-        $req = $this->getDb()->prepare('SELECT * FROM code_ade WHERE type = "Groupe"');
+        $req = $this->getDb()->prepare('SELECT * FROM code_ade WHERE type = "Groupe" ORDER BY title');
         $req->execute();
         while ($data = $req->fetch()) {
             $var[] = $data;
@@ -208,7 +205,7 @@ abstract class Model
      * @return array
      */
     public function getCodeHalfgroup(){
-        $req = $this->getDb()->prepare('SELECT * FROM code_ade WHERE type = "Demi-Groupe"');
+        $req = $this->getDb()->prepare('SELECT * FROM code_ade WHERE type = "Demi-Groupe" ORDER BY title');
         $req->execute();
         while ($data = $req->fetch()) {
             $var[] = $data;
@@ -264,31 +261,22 @@ abstract class Model
         return $result;
     }
 
-    protected function getAllCodeFromUser($type = null){
-        $req = $this->getDb()->prepare('SELECT code FROM wp_users WHERE role =:role');
-        $role = "etudiant";
-        $req->bindParam(':role',$role);
-        $req->execute();
-        $var = array();
-        while ($data = $req->fetch()) {
-            $var[] = $data;
-        }
-        $req->closeCursor();
-        foreach ($var as $value){
-            $unserCodes = unserialize($value['code']);
-            $userCodes[] = $unserCodes[$type];
-        }
-        return $userCodes;
-    }
-
     /**
-     * Renvoie tout les code ADE qui n'ont pas été enregistré dans la bd code_ade mais enregistré dans les utilisateurs
+     * Renvoie tout les code ADE qui n'ont pas été enregistré dans la bd code_ade mais enregistré dans les étudiants
      * @return array
      */
     public function codeNotBound($type = null){
-        $userCodes = $this->getAllCodeFromUser($type);
-        $codesAde = $this->getAll('code_ade');
+        $users = $this->getUsersByRole('etudiant');
         $allCode = array();
+        foreach ($users as $user){
+            $userCodes = unserialize($user['code']);
+            foreach ($userCodes as $userCode){
+                $allCode[] = $userCode;
+            }
+        }
+
+        $codesAde = $this->getAll('code_ade');
+
         $notRegisterCode = array();
         if(isset($codesAde)){
             foreach ($codesAde as $codeAde){
@@ -296,10 +284,18 @@ abstract class Model
             }
         }
         if(isset($userCodes)){
-            foreach ($userCodes as $userCode){
-                if(! in_array($userCode, $allCode))
-                    $notRegisterCode[] = $userCode;
+            if(is_array($userCodes)){
+                foreach ($userCodes as $userCode){
+                    if(! in_array($userCode, $allCode)) {
+                        $notRegisterCode[] = $userCode;
+                    }
+                }
+            } else {
+                if(! in_array($userCodes, $allCode)) {
+                    $notRegisterCode[] = $userCodes;
+                }
             }
+
         }
         if(empty($notRegisterCode)) {
             return null;

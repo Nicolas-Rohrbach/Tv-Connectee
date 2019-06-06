@@ -13,48 +13,15 @@ Possibilite de splitté le tableau en un nombre d'évèment définis (possibilte
 Possibilite de parametrer le nombre d'évement à afficher
 */
 
-// Require object
-if (empty($ics_data)) { return false; }
-
-global $R34ICS;
-global $wp_locale;
-
-$days_of_week = $R34ICS->get_days_of_week();
-$start_of_week = get_option('start_of_week', 0);
-
-// Not currently used in this template; uncomment if needed in a future update
-//$today = date_i18n('Ymd', current_time('timestamp'));
-
-$date_format = !empty($args['format']) ? strip_tags($args['format']) : 'l, F j';
-
-echo'<section class="ics-calendar'; if (!empty($args['hidetimes'])) { echo ' hide_times'; } echo'">';
-
-// Title and description
-if (isset($ics_data['title'])) {
-    echo '<h2 class="ics-calendar-title">'.$ics_data['title'].'</h2>';
-}
-if (isset($ics_data['description'])) {
-    echo '<p class="ics-calendar-description">'.$ics_data['description'].'</p>';
-}
-
 // Empty calendar message
 if (empty($ics_data['events'])){
+    echo 'Vous n\'avez pas cours !';
     return false;
-}
-
-// Display calendar
-else {
-    // Build monthly calendars
+} else {
     $i = 0;
     foreach (array_keys((array)$ics_data['events']) as $year) {
         for ($m = 1; $m <= 12; $m++) {
             $month = $m < 10 ? '0' . $m : '' . $m;
-            $ym = $year . $month;
-            if ($ym < $ics_data['earliest']) { continue; }
-            if ($ym > $ics_data['latest']) { break(2); }
-            $first_date = mktime(0,0,0,$month,1,$year);
-            $month_label = ucwords(date_i18n('F Y', $first_date));
-
             // Build month's calendar
             if (isset($ics_data['events'][$year][$month])) {
 
@@ -79,7 +46,7 @@ else {
                                             <tr>
                                                 <th scope="col" class="text-light text-center" width="20%">Horaire</th>
                                                 <th scope="col" class="text-light text-center" width="35%">Cours</th>
-                                                <th scope="col" class="text-light text-center" width="25%">Enseignant</th>
+                                                <th scope="col" class="text-light text-center" width="25%">Groupe/Enseignant</th>
                                                 <th scope="col" class="text-light text-center" width="20%">Salle</th>
                                             </tr>
                                             </thead>
@@ -125,6 +92,7 @@ else {
                                     }
                                     echo '<td class="text-center" width="35%">
                                             <span class="title">'; echo str_replace('/', '/<wbr />',$event['label']).'</span>';
+                                            //
                                     if (!empty($event['sublabel'])) {
                                         echo '<span class="sublabel">';
                                         if (empty($event['start']) && !empty($event['end'])) {
@@ -158,4 +126,3 @@ else {
         }
     }
 }
-echo '</section>';

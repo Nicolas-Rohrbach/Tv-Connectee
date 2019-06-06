@@ -90,7 +90,7 @@ class InformationManager
     public function getListInformation()
     {
         global $wpdb;
-        $result = $wpdb->get_results("SELECT * FROM informations", ARRAY_A);
+        $result = $wpdb->get_results("SELECT * FROM informations ORDER BY end_date", ARRAY_A);
         return $result;
     } //getListInformation()
 
@@ -104,7 +104,7 @@ class InformationManager
         global $wpdb;
         $result = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM informations WHERE author = %s",
+                "SELECT * FROM informations WHERE author = %s ORDER BY end_date",
                 $user
             ), ARRAY_A
         );

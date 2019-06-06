@@ -10,9 +10,9 @@ abstract class ViewG{
 
     protected function displayInsertImportFile($name){
         echo '<a href="/wp-content/plugins/TeleConnecteeAmu/models/Excel/addUsers/ajout'.$name.'s.xlsx"
-                download="Ajout '.$name.'">Télécharger le fichier Excel ! </a>
-             <form method="post" enctype="multipart/form-data">
-				<input type="file" name="excel'.$name.'" class="inpFil"/>
+                download="Ajout '.$name.'s.xlsx">Télécharger le fichier Excel ! </a>
+             <form id="'.$name.'" method="post" enctype="multipart/form-data">
+				<input type="file" name="excel'.$name.'" class="inpFil" required=""/>
 				<br/>
 				<button type="submit" name="import'.$name.'" value="Importer">Importer le fichier</button>
 			</form>
@@ -78,7 +78,7 @@ abstract class ViewG{
           </tbody>
         </table>
         </div>
-        <input type="submit" value="Supprimer" name="Delete"/>
+        <input type="submit" value="Supprimer" name="Delete" onclick="return confirm(\' Voulez-vous supprimer le(s) élément(s) sélectionné(s) ?\');"/>
         </form>';
     }
 
@@ -97,25 +97,35 @@ abstract class ViewG{
     }
 
     public function displayErrorDouble($doubles){
-        echo '
-        <div class="alert alert-danger">
-        <h2>Attention !</h2>';
-        foreach ($doubles as $double) {
-            echo "<h4>$double a rencontré un problème lors de l'enregistrement, vérifié son login et son email ! </h4>";
+        $this->displayStartModal('Erreur durant l\'incription ');
+                foreach ($doubles as $double) {
+            echo "<div class='alert alert-danger'>$double a rencontré un problème lors de l'enregistrement, vérifié son login et son email ! </div>";
         }
-        echo '</div>';
+        $this->displayEndModal();
     }
 
     public function displayInsertValidate(){
-        echo "<p class='alert alert-success'>Votre inscription a été validé. </p>";
+        $this->displayStartModal('Inscription validée');
+        echo "<p class='alert alert-success'>Votre inscription a été validée. </p>";
+        $this->displayEndModal();
     }
 
     public function displayWrongExtension(){
+        $this->displayStartModal('Mauvais fichier !');
         echo '<p class="alert alert-danger"> Mauvaise extension de fichier ! </p>';
+        $this->displayEndModal();
     }
 
     public function displayWrongFile(){
-        echo '<p class="alert alert-danger"> Vous utilisez un mauvais fichier excel/ ou vous avez changé le nom des colonnes </p>';
+        $this->displayStartModal('Mauvais fichier !');
+        echo '<p class="alert alert-danger"> Vous utilisez un mauvais fichier excel / ou vous avez changé le nom des colonnes </p>';
+        $this->displayEndModal();
+    }
+
+    public function displayModificationValidate(){
+        $this->displayStartModal('Modification réussie');
+        echo '<div class="alert alert-success"> La modification a été appliquée </div>';
+        $this->displayEndModal();
     }
 
     public function displayUnregisteredCode($badCodes){
@@ -178,5 +188,36 @@ abstract class ViewG{
         </table>
         ';
         }
+    }
+
+    public function displayStartModal($title){
+        echo '<!-- Modal -->
+        <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">'.$title.'</h5>
+              </div>
+              <div class="modal-body">';
+    }
+
+    public function displayEndModal($redirect = null){
+        echo '</div>
+              <div class="modal-footer">';
+        if(empty($redirect)){
+        echo '<button type="button" onclick="closeModal()">Fermer</button>';
+        } else {
+            echo '<button type="button" onclick="document.location.href =\' '.$redirect.' \'">Fermer</button>';
+        }
+        echo '</div>
+            </div>
+          </div>
+        </div>
+        
+        <script> $("#myModal").show() </script>';
+    }
+
+    public function displayTest() {
+        echo '<div class="alert alert-danger"> Cette fonctionnalitée est en test ! </div>';
     }
 }

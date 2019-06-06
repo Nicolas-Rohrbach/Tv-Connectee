@@ -62,13 +62,30 @@ class CodeAde extends ControllerG
      * Affiche tout les codes ADE enregistrés dans un tableau où on peut soit les supprimer soit les modifier
      */
     public function displayAllCodes(){
-        $results = $this->model->getAllCode();
-        if(isset($results[0])){
-            $this->view->displayAllCode($results);
+        $years = $this->model->getCodeYear();
+        $groups = $this->model->getCodeGroup();
+        $halfgroups = $this->model->getCodeHalfgroup();
+        $this->view->displayTableHeadCode();
+        $row = 0;
+        if(isset($years[0])){
+            foreach ($years as $year) {
+                $row = $row + 1;
+                $this->view->displayAllCode($year, $row);
+            }
         }
-        else{
-            $this->view->displayEmptyCode();
+        if(isset($groups[0])) {
+            foreach ($groups as $group){
+                $row = $row + 1;
+                $this->view->displayAllCode($group, $row);
+            }
         }
+        if(isset($halfgroups[0])) {
+            foreach ($halfgroups as $halfgroup) {
+                $row = $row + 1;
+                $this->view->displayAllCode($halfgroup, $row);
+            }
+        }
+        $this->view->displayEndTab();
     }
 
     /**

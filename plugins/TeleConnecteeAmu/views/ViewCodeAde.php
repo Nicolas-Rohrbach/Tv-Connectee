@@ -33,27 +33,21 @@ class ViewCodeAde extends ViewG
     /**
      * Header of the table
      */
-    public function tableHeadCode(){
+    public function displayTableHeadCode(){
         $tab = ["Titre", "Code ADE", "Type"];
         $this->displayStartTab($tab);
     }
 
     /**
      * Display all codes in a tab
-     * @param $results
+     * @param $result
+     * @param $row
      */
-    public function displayAllCode($results){
-        $this->tableHeadCode();
-        $row = 0;
-        foreach($results as $result){
-            ++$row;
-            $tab = [$result['title'], $result['code'], $result['type']];
-            $this->displayAll($row, $result['ID'], $tab);
-            echo '
-                    <td class="text-center"> <a href="http://'.$_SERVER['HTTP_HOST'].'/gestion-codes-ade/modification-code-ade/'.$result['ID'].'" name="modifetud" type="submit" value="Modifier">Modifier</a></td>
+    public function displayAllCode($result, $row){
+        $tab = [$result['title'], $result['code'], $result['type']];
+        $this->displayAll($row, $result['ID'], $tab);
+        echo '<td class="text-center"> <a href="/gestion-codes-ade/modification-code-ade/'.$result['ID'].'" name="modifCode" type="submit">Modifier</a></td>
                 </tr>';
-        }
-        $this->displayEndTab();
     }
 
     /**

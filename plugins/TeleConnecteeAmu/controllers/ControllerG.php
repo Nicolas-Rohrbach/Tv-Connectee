@@ -30,8 +30,8 @@ abstract class ControllerG {
             if(isset($_REQUEST['checkboxstatus'])) {
                 $checked_values = $_REQUEST['checkboxstatus'];
                 foreach($checked_values as $val) {
-                    $model->deleteUser($val);
                     $result = $model->getById($val);
+                    $model->deleteUser($val);
                     $alerts = $modelAlert->getListAlertByAuthor($result[0]['user_login']);
                     if(isset($alerts)){
                         foreach ($alerts as $alert) {
@@ -83,9 +83,8 @@ abstract class ControllerG {
      * @param $tab      Configuration pour les dates de début & fin de l'année scolaire
      */
     public function addFile($code){
-        $tab = $this->getTabConfig();
         $path = $this->getFilePath($code);
-        $url = 'https://ade-consult.univ-amu.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=' . $code . '&projectId=8&startDay=' . $tab[0] . '&startMonth=' . $tab[1] . '&startYear=' . $tab[2] . '&endDay=' . $tab[3] . '&endMonth=' . $tab[4] . '&endYear=' . $tab[5] . '&calType=ical';
+        $url = 'https://ade-consult.univ-amu.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=' . $code . '&projectId=8&calType=ical';
         file_put_contents($path, fopen($url, 'r'));
     }
 
@@ -94,7 +93,7 @@ abstract class ControllerG {
      * @param $code     Code ADE
      */
     public function deleteFile($code){
-        $path = ABSPATH . "/wp-content/plugins/TeleConnecteeAmu/controllers/fileICS/" . $code;
+        $path = ABSPATH . "/wp-content/plugins/TeleConnecteeAmu/controllers/fileICS/" .$code;
         if(! unlink($path))
             $this->addLogEvent("Le fichier ne s'est pas supprimer (chemin: ".$path.")");
     }

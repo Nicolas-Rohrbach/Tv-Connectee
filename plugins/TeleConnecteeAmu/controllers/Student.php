@@ -93,7 +93,7 @@ class Student extends ControllerG
                                    <p> Sur ce site, vous aurez accès à votre emploie du temps, à vos notes et aux informations concernant votre scolarité.</p>
                                    <p> Votre identifiant est '.$login.' et votre mot de passe est '.$pwd.'.</p>
                                    <p> Veuillez changer votre mot de passe lors de votre première connexion pour plus de sécurité !</p>
-                                   <p> Pour vous connecter, rendez-vous sur le site : <a href="'.home_url().'">.</p>
+                                   <p> Pour vous connecter, rendez-vous sur le site : <a href="'.home_url().'"> '.home_url().' </a>.</p>
                                    <p> Nous vous souhaitons une bonne expérience sur notre site.</p>
                                   </body>
                                  </html>
@@ -107,7 +107,7 @@ class Student extends ControllerG
                                 mail($to, $subject, $message, implode("\n", $headers));
                             }
                             else {
-                                array_push($doubles, $cells[0]);
+                                array_push($doubles, $login);
                             }
                         }
                     }
@@ -170,7 +170,7 @@ class Student extends ControllerG
         $codes = [$year, $group, $halfgroup];
         if($action == 'Valider'){
             if($this->model->modifyStudent($result['ID'], $codes)){
-                $this->view->refreshPage();
+                $this->view->displayModificationValidate();
             }
         }
     }

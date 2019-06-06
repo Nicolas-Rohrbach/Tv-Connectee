@@ -1,6 +1,5 @@
-<?php /* Template Name: Colonne Gauche */
-
-get_header(); ?>
+<?php /* Template Name: Colonne Gauche */ ?>
+<?php get_header(); ?>
 <?php get_sidebar('left'); ?>
 <div id="content-twocolumns">
     <?php if(have_posts()) :

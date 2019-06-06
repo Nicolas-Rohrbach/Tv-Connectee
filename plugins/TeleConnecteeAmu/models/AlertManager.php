@@ -6,7 +6,7 @@
  * Time: 11:01
  */
 
-class AlertManager
+class AlertManager extends Model
 {
     /**
      * Correspond to the database
@@ -39,7 +39,7 @@ class AlertManager
      * @param $content
      * @param $endDate
      */
-    public function addAlertDB($content, $endDate){
+    public function addAlertDB($content, $endDate, $codes){
         global $wpdb;
 
         $current_user = wp_get_current_user();
@@ -52,13 +52,14 @@ class AlertManager
 
         $wpdb->query(
             $wpdb->prepare(
-                "INSERT INTO `alerts`(`ID_alert`,`author`, `text`, `creation_date`, `end_date` )
-                        VALUES (%d, %s, %s, %s, %s)",
+                "INSERT INTO `alerts`(`ID_alert`,`author`, `text`, `creation_date`, `end_date`, `codes` )
+                        VALUES (%d, %s, %s, %s, %s, %s)",
                 null,
                 $user,
                 $content,
                 $creationDate,
-                $endDate
+                $endDate,
+                $codes
             )
         );
     } //addAlertDB()
@@ -85,7 +86,7 @@ class AlertManager
     public function getListAlert()
     {
         global $wpdb;
-        $result = $wpdb->get_results("SELECT * FROM alerts", ARRAY_A);
+        $result = $wpdb->get_results("SELECT * FROM alerts ORDER BY end_date", ARRAY_A);
         return $result;
     } //getListAlert()
 
@@ -111,7 +112,7 @@ class AlertManager
         global $wpdb;
         $result = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM alerts WHERE author = %s",
+                "SELECT * FROM alerts WHERE author = %s ORDER BY end_date",
                 $user
             ), ARRAY_A
         );
@@ -124,12 +125,14 @@ class AlertManager
      * @param $content
      * @param $endDate
      */
-    public function modifyAlert($id, $content, $endDate){
-        $req = $this->getBdd()->prepare('UPDATE alerts SET text=:content, end_date=:endDate
+    public function modifyAlert($id, $content, $endDate, $codes){
+        $serCode = serialize($codes);
+        $req = $this->getBdd()->prepare('UPDATE alerts SET text=:content, end_date=:endDate, codes=:codes
                                          WHERE ID_alert=:id');
         $req->bindParam(':id',$id);
         $req->bindParam(':content',$content);
         $req->bindParam(':endDate',$endDate);
+        $req->bindParam(':codes', $serCode);
 
         $req->execute();
     } //modifyAlert()

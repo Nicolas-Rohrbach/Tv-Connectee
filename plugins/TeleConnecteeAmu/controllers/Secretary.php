@@ -28,7 +28,7 @@ class Secretary{
 
         if(isset($action)){
             if($this->model->insertMySecretary($login, $pwd, $email)){
-                $this->view->refreshPage();
+                $this->view->displayInsertValidate();
             }
             else{
                 $this->view->displayErrorInsertion();

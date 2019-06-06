@@ -4,13 +4,13 @@ $current_user = wp_get_current_user();
 $model = new CodeAdeManager();
 $years = $model->getCodeYear();?>
 
-<?php if($current_user->role != "television") {?>
+<?php if($current_user->roles[0] != "television") {?>
 <div class="menu" id="myMenu">
     <?php if (!is_user_logged_in()) { ?>
     <a class="menu-item" href="<?php echo site_url('wp-login.php') ?>">CONNEXION</a>
     <?php } elseif (is_user_logged_in()) { ?>
     <div class="menu-item_dropdown menu-item">
-        <button class="dropbtn">EMPLOI DU TEMPS
+        <button class="dropbtn">Emploi du temps
             <i class="fa fa-caret-down"></i>
         </button>
         <div class="menu-item_dropdown-content">
@@ -21,9 +21,9 @@ $years = $model->getCodeYear();?>
             } ?>
         </div>
     </div>
-    <?php if ($current_user->role == "secretaire" || $current_user->role == "administrator") { ?>
+    <?php if ($current_user->roles[0] == "secretaire" || $current_user->roles[0] == "administrator") { ?>
         <div class="menu-item_dropdown menu-item">
-            <button class="dropbtn">UTILISATEURS
+            <button class="dropbtn">Utilisateurs
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="menu-item_dropdown-content">
@@ -31,9 +31,9 @@ $years = $model->getCodeYear();?>
                 <a href="/gestion-des-utilisateurs">Gestion des utilisateurs</a>
             </div>
         </div>
-    <?php }  if ($current_user->role == "secretaire" || $current_user->role == "administrator" || $current_user->role == "enseignant") { ?>
+    <?php }  if ($current_user->roles[0] == "secretaire" || $current_user->roles[0] == "administrator" || $current_user->roles[0] == "enseignant") { ?>
         <div class="menu-item_dropdown menu-item">
-            <button class="dropbtn">ALERTES
+            <button class="dropbtn">Alertes
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="menu-item_dropdown-content">
@@ -41,9 +41,9 @@ $years = $model->getCodeYear();?>
                 <a href="/gerer-les-alertes">Gestion des alertes</a>
             </div>
         </div>
-                <?php if ($current_user->role == "secretaire" || $current_user->role == "administrator") { ?>
+                <?php if ($current_user->roles[0] == "secretaire" || $current_user->roles[0] == "administrator") { ?>
                 <div class="menu-item_dropdown menu-item">
-                <button class="dropbtn">INFORMATIONS
+                <button class="dropbtn">Informations
                     <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="menu-item_dropdown-content">
@@ -52,7 +52,7 @@ $years = $model->getCodeYear();?>
                 </div>
                 </div>
                 <?php } ?>
-        <?php if ($current_user->role == "secretaire" || $current_user->role == "administrator") { ?>
+        <?php if ($current_user->roles[0] == "secretaire" || $current_user->roles[0] == "administrator") { ?>
             <a class="menu-item" href="/gestion-codes-ade/"> CODES ADE</a>
         <?php }
     } ?>
@@ -62,5 +62,5 @@ $years = $model->getCodeYear();?>
     <?php } ?>
 </div>
 <?php } else {?>
-    <a class="ninja" href="<?php echo wp_logout_url(); ?>">DÉCONNEXION</a>
+    <a class="ninja" href="<?php echo wp_logout_url(); ?>">Déconnexion</a>
 <?php } ?>

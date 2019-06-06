@@ -11,7 +11,7 @@ class ViewMyAccount extends ViewG
     public function displayVerifyPassword(){
         echo'
           <div class="cadre">
-            <form method="post">
+            <form id="check" method="post">
                 <label for="verifPwd">Votre mot de passe actuel</label>
                 <input type="password" class="form-control text-center" name="verifPwd" placeholder="Mot de passe" required="">';
     }
@@ -20,7 +20,7 @@ class ViewMyAccount extends ViewG
         echo '
                 <label for="newPwd">Votre nouveau mot de passe</label>
                 <input type="password" class="form-control text-center" name="newPwd" placeholder="Mot de passe" required="">
-                <button type="submit" name="modifyMyPwd">Modifier</button>
+                <button type="submit"  name="modifyMyPwd"> Modifier </button>
             </form>
           </div>';
     }
@@ -33,15 +33,21 @@ class ViewMyAccount extends ViewG
     }
 
     public function displayModificationValidate(){
+        $this->displayStartModal('Modification du mot de passe');
         echo '<div class="alert alert-success" role="alert">La modification à été réussie !</div>';
+        $this->displayEndModal(home_url());
     }
 
     public function displayWrongPassword(){
+        $this->displayStartModal('Mot de passe incorrect');
         echo '<div class="alert alert-danger"> Mauvais mot de passe </div>';
+        $this->displayEndModal();
     }
 
     public function displayMailSend(){
+        $this->displayStartModal('Mail envoyé');
         echo '<div class="alert alert-success"> Un mail a été envoyé à votre adresse mail, merci de bien vouloir entrer le code reçu</div>';
+        $this->displayEndModal();
     }
 
     public function displayEnterCode(){

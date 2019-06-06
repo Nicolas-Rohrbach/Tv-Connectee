@@ -22,23 +22,6 @@ class Schedule extends ControllerG
     }
 
     /**
-     * Vérifie si l'emploi du temps existe et qu'il a du contenus
-     * @param $code
-     * @param $force
-     * @return bool
-     */
-    public function checkSchedule($code, $force){
-        global $R34ICS;
-        $R34ICS = new R34ICS();
-        $url = ABSPATH."/wp-content/plugins/TeleConnecteeAmu/controllers/fileICS/".$code;
-        $contents = $R34ICS->checkCalendar($url, $force);
-        if (isset($contents))
-            return true;
-        else
-            return false;
-    }
-
-    /**
      * Affiche l'emploi du temps demandé
      * @param $code
      * @param $force
@@ -58,18 +41,15 @@ class Schedule extends ControllerG
             'title' => null,
             'view' => 'list',
         );
-        $contents = $R34ICS->checkCalendar($url, $force);
-        if (isset($contents)) {
-            $model = new CodeAdeManager();
-            $title = $model->getTitle($code);
-            if ($code == $title){
-                $this->addLogEvent("Le code non enregistré");
-                $current_user = wp_get_current_user();
-                $title = $current_user->user_login;
-            }
-            $this->view->displayName($title);
-            $R34ICS->display_calendar($contents, $args);
+        $model = new CodeAdeManager();
+        $title = $model->getTitle($code);
+        if ($code == $title){
+            $this->addLogEvent("Code non enregistré: ".$code);
+            $current_user = wp_get_current_user();
+            $title = $current_user->user_login;
         }
+        $this->view->displayName($title);
+        $R34ICS->display_calendar($url, $force, $args);
     }
 
     /**
@@ -81,11 +61,7 @@ class Schedule extends ControllerG
             $this->view->displaySelectSchedule();
         } else {
             $force = true;
-            if ($this->checkSchedule($code, $force)) {
-                $this->displaySchedule($code, $force);
-            }
-            else
-                $this->view->displayEmptySchedule();
+            $this->displaySchedule($code, $force);
         }
     }
 
@@ -95,36 +71,39 @@ class Schedule extends ControllerG
      */
     public function displaySchedules(){
         $current_user = wp_get_current_user();
-        if ($current_user->role == "television" || $current_user->role == "etudiant" || $current_user->role == "enseignant") {
+        if ($current_user->roles[0] == "television" || $current_user->roles[0] == "etudiant" || $current_user->roles[0] == "enseignant") {
             $force = true;
             $codes = unserialize($current_user->code);
-            $validSchedule = array();
 
-            foreach ($codes as $code) {
-                $addCode = new CodeAde();
-                $path = $addCode->getFilePath($code);
-                if(! file_exists($path) || file_get_contents($path) == ''){
-                    $addCode->addFile($code);
-                }
-                if($this->checkSchedule($code, $force))
-                    $validSchedule[] = $code;
+            if($current_user->role == "enseignant") {
+                $this->displaySchedule($codes[0], $force);
             }
-            if (empty($validSchedule))
-                $this->view->displayEmptySchedule();
-            else {
-                if ($current_user->role == "television") {
-                    $this->view->displayStartSlide();
-                    foreach ($validSchedule as $schedule) {
-                        $this->displaySchedule($schedule, $force);
-                        $this->view->displayMidSlide();
+
+            if($current_user->roles[0] == "etudiant" || $current_user->roles[0] == "television"){
+                if(is_array($codes)){
+                    foreach ($codes as $code) {
+                        $addCode = new CodeAde();
+                        $path = $addCode->getFilePath($code);
+                        if(! file_exists($path) || file_get_contents($path) == ''){
+                            $addCode->addFile($code);
+                        }
                     }
-                    $this->view->displayEndSlide();
+                    if ($current_user->role == "television") {
+                        $this->view->displayStartSlide();
+                        foreach ($codes as $code) {
+                            $this->displaySchedule($code, $force);
+                            $this->view->displayMidSlide();
+                        }
+                        $this->view->displayEndSlide();
+                    } else {
+                        $this->displaySchedule(end($codes), $force);
+                    }
                 }
                 else
-                    $this->displaySchedule(end($validSchedule), $force);
-            }
-        }
-        else
+                    $this->displaySchedule($codes, $force);
+                }
+        } else {
             $this->view->displayWelcome();
+        }
     }
 }

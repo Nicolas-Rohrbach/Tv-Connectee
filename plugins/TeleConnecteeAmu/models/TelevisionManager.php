@@ -14,7 +14,7 @@ class TelevisionManager extends Model
 
     }
 
-    public function modifyTv($result, $pwd, $codes){
-        return $this->modifyUser($result['ID'], $result['user_login'], $pwd, $result['user_email'], $codes);
+    public function modifyTv($result, $codes){
+        return $this->modifyUser($result['ID'], $result['user_login'], $codes);
     }
 }

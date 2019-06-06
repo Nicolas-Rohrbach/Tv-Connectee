@@ -95,21 +95,28 @@ class ViewTelevision extends ViewG{
             <label>Mot de passe </label>
             <input type="password" class="form-control text-center modal-sm" name="pwdTv" placeholder="Mot de passe">
             <label> Emploi du temps</label>';
-        foreach ($codes as $code) {
-            $count = $count + 1;
-            if($count == 1){
-                echo '<select class="form-control firstSelect" name="selectTv[]" id="selectId'.$count.'">';
-                $this->displaySelectSelected($years, $groups, $halfgroups, $code);
-                echo '<br/>';
-            } else {
-                echo '<div class="row">';
-                echo '<select class="form-control select" name="selectTv[]" id="selectId'.$count.'">';
-                $this->displaySelectSelected($years, $groups, $halfgroups, $code);
-                echo '<input type="button" id="selectId'.$count.'" onclick="deleteRow(this.id)" class="selectbtn" value="Supprimer"></div>';
+        if(is_array($codes)){
+            foreach ($codes as $code) {
+                $count = $count + 1;
+                if($count == 1){
+                    echo '<select class="form-control firstSelect" name="selectTv[]" id="selectId'.$count.'">';
+                    $this->displaySelectSelected($years, $groups, $halfgroups, $code);
+                    echo '<br/>';
+                } else {
+                    echo '<div class="row">';
+                    echo '<select class="form-control select" name="selectTv[]" id="selectId'.$count.'">';
+                    $this->displaySelectSelected($years, $groups, $halfgroups, $code);
+                    echo '<input type="button" id="selectId'.$count.'" onclick="deleteRow(this.id)" class="selectbtn" value="Supprimer"></div>';
+                }
             }
+        } else {
+            echo '<select class="form-control firstSelect" name="selectTv[]" id="selectId'.$count.'">';
+            $this->displaySelectSelected($years, $groups, $halfgroups, $codes);
+            echo '<br/>';
         }
+
         echo '
-            <input type="button" onclick="addButton()" value="Ajouter des emplois du temps">
+            <input type="button" onclick="addButtonTv()" value="Ajouter des emplois du temps">
             <input name="modifValidate" type="submit" value="Valider">
             <a href="/gestion-des-utilisateurs">Annuler</a>
          </form>
@@ -118,6 +125,8 @@ class ViewTelevision extends ViewG{
     }
 
     public function displayErrorLogin(){
+        $this->displayStartModal('Inscription échouée');
         echo '<div class="alert alert-danger"> Le login est déjà utilisé ! </div>';
+        $this->displayEndModal();
     }
 }

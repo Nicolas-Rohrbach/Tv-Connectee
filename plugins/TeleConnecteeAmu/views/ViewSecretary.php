@@ -40,6 +40,8 @@ class ViewSecretary extends ViewG
     }
 
     public function displayErrorInsertion(){
-        echo '<div class="alert alert-danger"> Le login ou l\'adresse mail est déjà utilisé </div>';
+        $this->displayStartModal('Erreur lors de l\'inscription ');
+        echo '<div class="alert alert-danger"> Le login ou l\'adresse mail est déjà utilisé(e) </div>';
+        $this->displayEndModal();
     }
 }

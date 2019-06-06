@@ -43,7 +43,7 @@ function wpm_admin_redirection() {
  * @return mixed
  */
 function my_login_logo_url() {
-    return get_bloginfo($_SERVER['HTTP_HOST']);
+    return $_SERVER['HTTP_HOST'];
 }
 add_filter( 'login_headerurl', 'my_login_logo_url' );
 
