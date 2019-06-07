@@ -25,18 +25,18 @@ class ManagementUsers extends ControllerG{
         if($action == "students"){
             $controller = new Student();
             $controller->displayAllStudents();
-        }
-        elseif ($action == "teachers") {
+        } elseif ($action == "teachers") {
             $controller = new Teacher();
             $controller->displayAllTeachers();
-        }
-        elseif ($action == "televisions"){
+        } elseif ($action == "televisions"){
             $controller = new Television();
             $controller->displayAllTv();
-        }
-        elseif ($action == "secretarys"){
+        } elseif ($action == "secretarys"){
             $controller = new Secretary();
             $controller->displayAllSecretary();
+        } elseif ($action == "technicians") {
+            $controller = new Technician();
+            $controller->displayAllTechnician();
         }
     }
 
@@ -44,20 +44,16 @@ class ManagementUsers extends ControllerG{
      * Modifie l'utilisateur choisi
      */
     public function modifyUser(){
-        $model = new TeacherManager();
-        $result = $model->getById($this->getMyIdUrl());
-
-        if($result['role'] == "etudiant"){
+        $user = get_user_by( 'ID', $this->getMyIdUrl() );
+        if(in_array("etudiant",$user->roles)){
             $controller = new Student();
-            $controller->modifyMyStudent($result);
-        }
-        elseif ($result['role'] == "enseignant"){
+            $controller->modifyMyStudent($user);
+        } elseif (in_array("enseignant",$user->roles)){
             $controller = new Teacher();
-            $controller->modifyTeacher($result);
-        }
-        elseif ($result['role'] == "television"){
+            $controller->modifyTeacher($user);
+        } elseif (in_array("television",$user->roles)){
             $controller = new Television();
-            $controller->modifyTv($result);
+            $controller->modifyTv($user);
         }
     }
 }

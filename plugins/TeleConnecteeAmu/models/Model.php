@@ -256,6 +256,16 @@ abstract class Model
      * @return mixed
      */
     public function getById($id){
+        $req = $this->getDb()->prepare('SELECT * FROM wp_users user, wp_usermeta meta WHERE user.ID = meta.user_id AND user.ID =:id 
+                                        ORDER BY user.code, user.user_login');
+
+        $req->bindParam(':id', $id);
+        $req->execute();
+        while ($data = $req->fetch()) {
+            $var[] = $data;
+        }
+        return $var;
+        $req->closeCursor();
         global $wpdb;
         $result = $wpdb->get_row('SELECT * FROM `wp_users` WHERE `ID` ="' . $id . '"', ARRAY_A);
         return $result;

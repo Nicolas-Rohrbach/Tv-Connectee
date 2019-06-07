@@ -72,6 +72,16 @@ abstract class ControllerG {
         return $tab;
     }
 
+    public  function getUrl($code){
+        $str = strtotime("last Monday");
+        $str2 = strtotime(date("Y-m-d", strtotime('last Monday')) . " +4 day");
+        $start =  date('Y-m-d',$str);
+        $end = date('Y-m-d',$str2);
+        $url = 'https://ade-consult.univ-amu.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?projectId=8&resources=' . $code . '&calType=ical&firstDate='.$start.'&lastDate='.$end;
+        echo $url;
+        return $url;
+    }
+
     public function getFilePath($code){
         $path = ABSPATH . "/wp-content/plugins/TeleConnecteeAmu/controllers/fileICS/" . $code;
         return $path;
@@ -84,8 +94,11 @@ abstract class ControllerG {
      */
     public function addFile($code){
         $path = $this->getFilePath($code);
-        $url = 'https://ade-consult.univ-amu.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=' . $code . '&projectId=8&calType=ical';
-        file_put_contents($path, fopen($url, 'r'));
+        $url = $this->getUrl($code);
+        $file = @fopen($url, 'r');
+        if(isset($file)){
+            file_put_contents($path, $file);
+        }
     }
 
     /**

@@ -32,18 +32,18 @@ class ViewStudent extends ViewG
     }
 
     public function displayRedSignification(){
-        echo '<div>Zone rouge = Code ADE non enregistré</div>';
+        echo '<div class="red">Zone rouge = Code ADE non enregistré</div>';
     }
 
     public function displayModifyStudent($result, $years, $groups, $halfgroups){
-        $code = unserialize($result['code']);
+        $code = unserialize($result->code);
         $model = new CodeAdeManager();
         $titleYear = $model->getTitle($code[0]);
         $titleGroup = $model->getTitle($code[1]);
         $titleHalfgroup = $model->getTitle($code[2]);
         echo '
 <div class="cadre">
-         <h3>'.$result['user_login'].'</h3>
+         <h3>'.$result->user_login.'</h3>
          <form method="post">
             <label>Année</label>
             <select class="form-control" name="modifYear">

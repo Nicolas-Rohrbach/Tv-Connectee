@@ -7,7 +7,6 @@
 #content {
     margin-left: 5%;
     margin-right: 5%;
-    text-align: center;
     color: black;
     width: 90%;
 }
@@ -76,25 +75,6 @@ input[type=button], input[type=submit], input[type=reset], button {
     width: 100% !important;
     max-height: 30ex;
     font-size: smaller;
-}
-
-.postmetadata {
-    font-size: 0.8em;
-    color: #999;
-}
-
-.post_content {
-    font-size: 1em;
-    color: #555;
-}
-
-.post_content a {
-    color: #006699;
-}
-
-.post_content a:hover {
-    color: #fff;
-    background: #006699;
 }
 
 

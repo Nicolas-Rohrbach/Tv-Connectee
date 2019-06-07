@@ -60,9 +60,10 @@ class Information {
     function informationManagement(){
         $current_user = wp_get_current_user();
         $user = $current_user->user_login;
+        if(in_array("administrator", $current_user->roles)) $result = $this->DB->getListInformation();
+        else $result = $this->DB->getListInformationByAuthor($user);
 
-        $result = $this->DB->getListInformationByAuthor($user);
-        echo '<a href="'.$_SERVER['HTTP_HOST'].'/creer-information/"> Créer une information </a>';
+        echo '<a href="/creer-information/"> Créer une information </a>';
         $this->view->tabHeadInformation();
         $i = 0;
 
@@ -74,7 +75,13 @@ class Information {
             $creationDate = $row['creation_date'];
             $endDate = $row['end_date'];
 
-            $this->view->displayAllInformation($id, $title, $author, $content, $creationDate, $endDate, ++$i);
+            $this->endDateCheckInfo($id, $endDate);
+
+            // change l'affichage de la date en français (jour-mois-année)
+            $endDatefr = date("d-m-Y", strtotime($endDate));
+            $creationDatefr = date("d-m-Y", strtotime($creationDate));
+
+            $this->view->displayAllInformation($id, $title, $author, $content, $creationDatefr, $endDatefr, ++$i);
         }
         $this->view->displayEndTab();
     } // informationManagement()

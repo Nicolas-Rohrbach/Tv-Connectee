@@ -17,6 +17,8 @@ class ViewManagementUsers extends ViewG
           <input type="radio" name="seeUsers" id="teachers" value="teachers">
           <label for="secretarys">Secrétaires</label>
           <input type="radio" name="seeUsers" id="secretarys" value="secretarys">
+          <label for="technicians">Techniciens</label>
+          <input type="radio" name="seeUsers" id="technicians" value="technicians">
           <label for="televisions">Télévisions</label>
           <input type="radio" name="seeUsers" id="televisions" value="televisions">
           <input type="submit" value="Sélectionner">

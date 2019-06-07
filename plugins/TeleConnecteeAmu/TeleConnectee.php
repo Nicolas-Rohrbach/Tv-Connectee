@@ -31,6 +31,10 @@ include_once 'controllers/Secretary.php';
 include_once 'models/SecretaryManager.php';
 include_once 'views/ViewSecretary.php';
 
+include_once 'controllers/Technician.php';
+include_once 'models/TechnicianManager.php';
+include_once 'views/ViewTechnician.php';
+
 include_once 'controllers/ManagementUsers.php';
 include_once 'views/ViewManagementUsers.php';
 
@@ -38,11 +42,8 @@ include_once 'controllers/MyAccount.php';
 include_once 'models/MyAccountManager.php';
 include_once 'views/ViewMyAccount.php';
 
-include_once 'models/DAO/DAOUser.php';
-include_once 'models/DAO/DAOStudent.php';
-include_once 'models/DAO/DAOTeacher.php';
-
 include_once 'controllers/R34ICS.php';
+include_once 'views/ViewICS.php';
 include_once 'controllers/Schedule.php';
 include_once 'views/ViewSchedule.php';
 include_once 'widgets/WidgetSchedule.php';
@@ -68,6 +69,7 @@ $student = new Student();
 $teacher = new Teacher();
 $television = new Television();
 $secretary = new Secretary();
+$technician = new Technician();
 $myAccount = new MyAccount();
 
 $information = new Information();
@@ -87,6 +89,7 @@ add_action('add_student', array($student, 'insertStudent'), 0, 1);
 add_action('add_teacher', array($teacher, 'insertTeacher'), 0, 1);
 add_action('add_television', array($television, 'insertTelevision'), 0, 7);
 add_action('add_secretary', array($secretary, 'insertSecretary'));
+add_action('add_technician',array($technician, 'insertTechnician'));
 
 add_action('displayManagementUsers', array($managementUsers, 'displayUsers'), 0, 1);
 add_action('modify_user', array($managementUsers, 'ModifyUser'));
@@ -126,14 +129,16 @@ function downloadFileICS_func() {
     foreach ($allCodes as $code){
         $path = $controllerAde->getFilePath($code['code']);
         $controllerAde->addFile($code['code']);
-        if(file_get_contents($path) == '')
+        if(file_get_contents($path) == ''){
             $controllerAde->addFile($code['code']);
+        }
     }
 }
 
 function wpdocs_plugin_teleconnecteeAmu_scripts() {
     wp_enqueue_style('plugin-bootstrap-style', 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css', array(), true);
     wp_enqueue_style('weather-style', '/wp-content/plugins/TeleConnecteeAmu/views/css/weather.css', array(), true);
+    wp_enqueue_style('style-style', '/wp-content/plugins/TeleConnecteeAmu/views/css/style.css', array(), true);
     wp_enqueue_style('alert-style', '/wp-content/plugins/TeleConnecteeAmu/views/css/alert.css', array(), true);
     wp_enqueue_style('info-style', '/wp-content/plugins/TeleConnecteeAmu/views/css/information.css', array(), true);
     wp_enqueue_style('schedule-style', '/wp-content/plugins/TeleConnecteeAmu/views/css/schedule.css', array(), true);
@@ -148,5 +153,7 @@ function wpdocs_plugin_teleconnecteeAmu_scripts() {
     wp_enqueue_script( 'plugin-showModal', '/wp-content/plugins/TeleConnecteeAmu/views/js/modal.js', array ( 'jquery' ), '', true);
     wp_enqueue_script( 'plugin-ticker', '/wp-content/plugins/TeleConnecteeAmu/views/js/jquery.tickerNews.js', array ( 'jquery' ), '', true);
     wp_enqueue_script( 'plugin-alertTicker', '/wp-content/plugins/TeleConnecteeAmu/views/js/alertTicker.js', array ( 'jquery' ), '', true);
+    wp_enqueue_script( 'plugin-OneSignal', '/wp-content/plugins/TeleConnecteeAmu/views/js/oneSignalPush.js', array ( 'jquery' ), '', true);
+
 }
 add_action( 'wp_enqueue_scripts', 'wpdocs_plugin_teleconnecteeAmu_scripts' );

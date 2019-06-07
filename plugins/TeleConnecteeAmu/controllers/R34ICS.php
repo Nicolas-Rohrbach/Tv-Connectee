@@ -16,12 +16,14 @@ class R34ICS extends ControllerG {
     var $carbon_path = '/fileR34ICS/vendors/ics-parser/vendor/nesbot/carbon/src/Carbon/Carbon.php';
     var $parser_loaded = false;
     var $limit_days = 365;
+    private $view;
 
     public function __construct() {
         // Set property values
         $this->ical_path = dirname(__FILE__) . $this->ical_path;
         $this->event_path = dirname(__FILE__) . $this->event_path;
         $this->carbon_path = dirname(__FILE__) . $this->carbon_path;
+        $this->view = new ViewICS();
     }
 
     public function days_of_week($format=null) {
@@ -64,7 +66,7 @@ class R34ICS extends ControllerG {
         return $days_of_week;
     }
 
-    public function display_calendar($ics_url, $force_reload=false, $args=array()) {
+    public function display_calendar($ics_url, $code, $force_reload=false, $args=array()) {
         // Get ICS file, from transient if possible
         $transient_name = __METHOD__ . '_' . sha1($ics_url);
         $ics_contents = null;
@@ -299,11 +301,18 @@ class R34ICS extends ControllerG {
             $ics_data['description'] = ($args['description'] == 'none') ? false : $args['description'];
         }
 
+        $model = new CodeAdeManager();
+        $title = $model->getTitle($code);
+        if ($code == $title){
+            $this->addLogEvent("Code non enregistré: ".$code);
+            $current_user = wp_get_current_user();
+            $title = $current_user->user_login;
+        }
+
         // Render template
         switch(@$args['view']) {
             case 'list':
-                include(dirname(__FILE__) . '/fileR34ICS/templates/calendar-list.php');
-                break;
+                $this->view->displaySchedule($ics_data, $title);
             case 'month':
             default:
                 include(dirname(__FILE__) . '/fileR34ICS/templates/calendar-month.php');

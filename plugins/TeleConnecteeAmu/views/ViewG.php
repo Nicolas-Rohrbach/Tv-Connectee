@@ -19,6 +19,23 @@ abstract class ViewG{
 			<br/>';
     }
 
+    protected function displayBaseForm($name){
+        echo '
+        <div class="cadre">
+             <div align="center">
+                <form method="post">
+                    <label for="login'.$name.'">Login</label>
+                    <input type="text" class="form-control text-center modal-sm" name="login'.$name.'" placeholder="Login" required="">
+                    <label for="pwd'.$name.'">Mot de passe</label>
+                    <input type="password" class="form-control text-center modal-sm" name="pwd'.$name.'" placeholder="Mot de passe" required="">
+                    <label for="email'.$name.'">Email</label>
+                    <input type="email" class="form-control text-center modal-sm" name="email'.$name.'" placeholder="Email" required="">
+                  <button type="submit" name="create'.$name.'">Créer</button>
+                </form>
+            </div>
+         </div>';
+    }
+
     protected function displayHeaderTab($title = null){
         echo '
             <h1>'.$title.'</h1>
@@ -29,6 +46,14 @@ abstract class ViewG{
                     <tr class="text-center">
                         <th scope="col" width="5%" class="text-center">#</th>
                         <th scope="col" width="5%" class="text-center"><input type="checkbox" onClick="toggle(this)" /></th>';
+    }
+
+    protected function displayStartTabLog($title){
+        $this->displayHeaderTab($title);
+        echo '<th scope="col">Login</th>
+                    </tr>
+                </thead>
+                <tbody>';
     }
 
     /**
@@ -87,45 +112,6 @@ abstract class ViewG{
      */
     public function refreshPage(){
         echo '<meta http-equiv="refresh" content="0">';
-    }
-
-    /**
-     * Display a message
-     */
-    public function displayEmpty(){
-        echo "<div> Il n'y pas d'utilisateur de ce rôle inscrit!</div>";
-    }
-
-    public function displayErrorDouble($doubles){
-        $this->displayStartModal('Erreur durant l\'incription ');
-                foreach ($doubles as $double) {
-            echo "<div class='alert alert-danger'>$double a rencontré un problème lors de l'enregistrement, vérifié son login et son email ! </div>";
-        }
-        $this->displayEndModal();
-    }
-
-    public function displayInsertValidate(){
-        $this->displayStartModal('Inscription validée');
-        echo "<p class='alert alert-success'>Votre inscription a été validée. </p>";
-        $this->displayEndModal();
-    }
-
-    public function displayWrongExtension(){
-        $this->displayStartModal('Mauvais fichier !');
-        echo '<p class="alert alert-danger"> Mauvaise extension de fichier ! </p>';
-        $this->displayEndModal();
-    }
-
-    public function displayWrongFile(){
-        $this->displayStartModal('Mauvais fichier !');
-        echo '<p class="alert alert-danger"> Vous utilisez un mauvais fichier excel / ou vous avez changé le nom des colonnes </p>';
-        $this->displayEndModal();
-    }
-
-    public function displayModificationValidate(){
-        $this->displayStartModal('Modification réussie');
-        echo '<div class="alert alert-success"> La modification a été appliquée </div>';
-        $this->displayEndModal();
     }
 
     public function displayUnregisteredCode($badCodes){
@@ -219,5 +205,50 @@ abstract class ViewG{
 
     public function displayTest() {
         echo '<div class="alert alert-danger"> Cette fonctionnalitée est en test ! </div>';
+    }
+
+    /**
+     * Display a message
+     */
+    public function displayEmpty(){
+        echo "<div> Il n'y pas d'utilisateur de ce rôle inscrit!</div>";
+    }
+
+    public function displayErrorDouble($doubles){
+        $this->displayStartModal('Erreur durant l\'incription ');
+        foreach ($doubles as $double) {
+            echo "<div class='alert alert-danger'>$double a rencontré un problème lors de l'enregistrement, vérifié son login et son email ! </div>";
+        }
+        $this->displayEndModal();
+    }
+
+    public function displayInsertValidate(){
+        $this->displayStartModal('Inscription validée');
+        echo "<p class='alert alert-success'>Votre inscription a été validée. </p>";
+        $this->displayEndModal();
+    }
+
+    public function displayWrongExtension(){
+        $this->displayStartModal('Mauvais fichier !');
+        echo '<p class="alert alert-danger"> Mauvaise extension de fichier ! </p>';
+        $this->displayEndModal();
+    }
+
+    public function displayWrongFile(){
+        $this->displayStartModal('Mauvais fichier !');
+        echo '<p class="alert alert-danger"> Vous utilisez un mauvais fichier excel / ou vous avez changé le nom des colonnes </p>';
+        $this->displayEndModal();
+    }
+
+    public function displayModificationValidate(){
+        $this->displayStartModal('Modification réussie');
+        echo '<div class="alert alert-success"> La modification a été appliquée </div>';
+        $this->displayEndModal();
+    }
+
+    public function displayErrorInsertion(){
+        $this->displayStartModal('Erreur lors de l\'inscription ');
+        echo '<div class="alert alert-danger"> Le login ou l\'adresse mail est déjà utilisé(e) </div>';
+        $this->displayEndModal();
     }
 }

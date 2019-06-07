@@ -41,15 +41,7 @@ class Schedule extends ControllerG
             'title' => null,
             'view' => 'list',
         );
-        $model = new CodeAdeManager();
-        $title = $model->getTitle($code);
-        if ($code == $title){
-            $this->addLogEvent("Code non enregistré: ".$code);
-            $current_user = wp_get_current_user();
-            $title = $current_user->user_login;
-        }
-        $this->view->displayName($title);
-        $R34ICS->display_calendar($url, $force, $args);
+        $R34ICS->display_calendar($url, $code, $force, $args);
     }
 
     /**
@@ -71,15 +63,15 @@ class Schedule extends ControllerG
      */
     public function displaySchedules(){
         $current_user = wp_get_current_user();
-        if ($current_user->roles[0] == "television" || $current_user->roles[0] == "etudiant" || $current_user->roles[0] == "enseignant") {
+        if (in_array("television",$current_user->roles) || in_array("etudiant",$current_user->roles) || in_array("enseignant",$current_user->roles)) {
             $force = true;
             $codes = unserialize($current_user->code);
 
-            if($current_user->role == "enseignant") {
+            if(in_array("enseignant",$current_user->roles)) {
                 $this->displaySchedule($codes[0], $force);
             }
 
-            if($current_user->roles[0] == "etudiant" || $current_user->roles[0] == "television"){
+            if(in_array("etudiant",$current_user->roles) || in_array("television",$current_user->roles)){
                 if(is_array($codes)){
                     foreach ($codes as $code) {
                         $addCode = new CodeAde();
@@ -88,11 +80,14 @@ class Schedule extends ControllerG
                             $addCode->addFile($code);
                         }
                     }
-                    if ($current_user->role == "television") {
+                    if (in_array("television",$current_user->roles)) {
                         $this->view->displayStartSlide();
                         foreach ($codes as $code) {
-                            $this->displaySchedule($code, $force);
-                            $this->view->displayMidSlide();
+                            $path = $this->getFilePath($code);
+                            if(file_exists($path)){
+                                $this->displaySchedule($code, $force);
+                                $this->view->displayMidSlide();
+                            }
                         }
                         $this->view->displayEndSlide();
                     } else {
@@ -102,7 +97,15 @@ class Schedule extends ControllerG
                 else
                     $this->displaySchedule($codes, $force);
                 }
-        } else {
+        } elseif (in_array("technicien", $current_user->roles)){
+            $model = new CodeAdeManager();
+            $years = $model->getCodeYear();
+            $force = true;
+            foreach ($years as $year){
+                $this->displaySchedule($year['code'], $force);
+            }
+        }
+        else {
             $this->view->displayWelcome();
         }
     }

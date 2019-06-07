@@ -4,7 +4,7 @@ $current_user = wp_get_current_user();
 $model = new CodeAdeManager();
 $years = $model->getCodeYear();?>
 
-<?php if($current_user->roles[0] != "television") {?>
+<?php if(! in_array("television", $current_user->roles)) {?>
 <div class="menu" id="myMenu">
     <?php if (!is_user_logged_in()) { ?>
     <a class="menu-item" href="<?php echo site_url('wp-login.php') ?>">CONNEXION</a>
@@ -21,7 +21,7 @@ $years = $model->getCodeYear();?>
             } ?>
         </div>
     </div>
-    <?php if ($current_user->roles[0] == "secretaire" || $current_user->roles[0] == "administrator") { ?>
+    <?php if (in_array('secretaire',$current_user->roles) || in_array('administrator',$current_user->roles)) { ?>
         <div class="menu-item_dropdown menu-item">
             <button class="dropbtn">Utilisateurs
                 <i class="fa fa-caret-down"></i>
@@ -31,7 +31,7 @@ $years = $model->getCodeYear();?>
                 <a href="/gestion-des-utilisateurs">Gestion des utilisateurs</a>
             </div>
         </div>
-    <?php }  if ($current_user->roles[0] == "secretaire" || $current_user->roles[0] == "administrator" || $current_user->roles[0] == "enseignant") { ?>
+    <?php }  if (in_array('secretaire',$current_user->roles) || in_array('administrator',$current_user->roles) || in_array('enseignant',$current_user->roles)) { ?>
         <div class="menu-item_dropdown menu-item">
             <button class="dropbtn">Alertes
                 <i class="fa fa-caret-down"></i>
@@ -41,7 +41,7 @@ $years = $model->getCodeYear();?>
                 <a href="/gerer-les-alertes">Gestion des alertes</a>
             </div>
         </div>
-                <?php if ($current_user->roles[0] == "secretaire" || $current_user->roles[0] == "administrator") { ?>
+                <?php if (in_array('secretaire',$current_user->roles) || in_array('administrator',$current_user->roles)) { ?>
                 <div class="menu-item_dropdown menu-item">
                 <button class="dropbtn">Informations
                     <i class="fa fa-caret-down"></i>
@@ -52,7 +52,7 @@ $years = $model->getCodeYear();?>
                 </div>
                 </div>
                 <?php } ?>
-        <?php if ($current_user->roles[0] == "secretaire" || $current_user->roles[0] == "administrator") { ?>
+        <?php if (in_array('secretaire',$current_user->roles) || in_array('administrator',$current_user->roles)) { ?>
             <a class="menu-item" href="/gestion-codes-ade/"> CODES ADE</a>
         <?php }
     } ?>

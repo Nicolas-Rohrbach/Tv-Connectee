@@ -85,10 +85,10 @@ class ViewTelevision extends ViewG{
     }
 
     public function displayModifyTv($result, $years, $groups, $halfgroups){
-        $codes = unserialize($result['code']);
+        $codes = unserialize($result->code);
         $count = 0;
         echo '
-         <h3>'.$result['user_login'].'</h3>
+         <h3>'.$result->user_login.'</h3>
          <div class="cadre">
          <div align="center">
          <form method="post" id="registerTvForm">

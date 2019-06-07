@@ -65,7 +65,7 @@ class Alert
 
         $current_user = wp_get_current_user();
         $user = $current_user->user_login;
-        if($current_user->role == 'administrator') $result = $this->DB->getListAlert();
+        if(in_array("administrator", $current_user->roles)) $result = $this->DB->getListAlert();
         else $result = $this->DB->getListAlertByAuthor($user);
 
         $this->view->tabHeadAlert();
@@ -140,7 +140,7 @@ class Alert
         // Recuperation des codes de l'utilisateur
         $current_user = wp_get_current_user();
         $codesUserList = array();
-        if ($current_user->roles[0] == "television" || $current_user->roles[0] == "etudiant" || $current_user->roles[0] == "enseignant") {
+        if (in_array("television", $current_user->roles) || in_array("etudiant", $current_user->roles) || in_array("enseignant", $current_user->roles)) {
             $codes = unserialize($current_user->code);
             if(is_array($codes)){
                 foreach ($codes as $code) {
@@ -159,7 +159,7 @@ class Alert
         foreach ($result as $row) {
             $alertCodes = unserialize($row['codes']);
             $id = $row['ID_alert'];
-            if($current_user->roles[0] == 'administrator' || $current_user->roles[0] == 'secretaire' ) {
+            if(in_array("administrator",$current_user->roles) || in_array("secretaire", $current_user->roles)) {
                 array_push($alertIDList,$id);
             } else {
                 foreach ($alertCodes as $code){
@@ -183,11 +183,58 @@ class Alert
             $content .= "&emsp;&emsp;&emsp;&emsp;";
             array_push($contentList, $content);
         }
+
         $this->view->displayAlertMain($contentList);
 
     } // alertMain()
 
+
+
+function sendMessage() {
+    $content      = array(
+        "en" => 'Ceci est une alerte test'
+    );
+    $hashes_array = array();
+    $fields = array(
+        'app_id' => "317b1068-1f28-4e19-81e4-9a3553c449ea",
+        'included_segments' => array(
+            'All'
+        ),
+        'data' => array(
+            "foo" => "bar"
+        ),
+        'contents' => $content,
+        'web_buttons' => $hashes_array
+    );
+
+    $fields = json_encode($fields);
+
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json; charset=utf-8',
+        'Authorization: Basic YjY1ZGUxMDktYjNhZi00NTYxLWIwZjYtNWEwMmZhNzQ2ZGY1'
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
+}
+
+
     public function test(){
-      echo 'bienvenue sur la page de test';
+
+        echo 'bienvenue sur la page de test </br>
+        <a href="#" id="my-notification-button" style="display: none;">Subscribe to Notifications</a>';
+        $this->sendMessage();
+
+
     }
 }

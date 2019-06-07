@@ -144,8 +144,8 @@ class Student extends ControllerG
                 $halfgroup = $this->model->getTitle($code[2]);
                 $this->view->displayAllStudent($id, $login, $year, $group, $halfgroup, $row);
             }
-            $this->view->displayRedSignification();
             $this->view->displayEndTab();
+            $this->view->displayRedSignification();
         }
         else{
             $this->view->displayEmpty();

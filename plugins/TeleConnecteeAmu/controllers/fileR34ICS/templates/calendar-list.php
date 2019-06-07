@@ -9,7 +9,7 @@ Domain Path: /i18n/languages/
 Description: Recupère le format ical et l'affiche sous forme de tableau
 on n'affiche pas les cours qui ont déja eu lieu en utilisant un timestamp de la date et heure actuel
 Grace au timestamp on surligne en vert les cours qui ont lieu au moment du visionnage
-Possibilite de splitté le tableau en un nombre d'évèment définis (possibilte de developpement pour creer un slide avec les tableau)
+Possibilite de splitté le tableau en un nombre d'évèment définis
 Possibilite de parametrer le nombre d'évement à afficher
 */
 

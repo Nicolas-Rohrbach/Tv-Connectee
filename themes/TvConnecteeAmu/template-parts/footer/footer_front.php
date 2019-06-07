@@ -1,20 +1,14 @@
-<?php
-?>
-
+<?php $current_user = wp_get_current_user(); ?>
+<?php if(is_user_logged_in() && ! in_array("technicien", $current_user->roles)) { ?>
 <div id="footer-left">
-    <?php if(is_user_logged_in()) { ?>
         <?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Footer gauche') ) : endif; ?>
-    <?php } ?>
 </div>
 <div id="footer-right">
-    <?php if(is_user_logged_in()) { ?>
         <?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Footer droite') ) : endif; ?>
-    <?php } ?>
 </div>
 
 <div id="footer">
-    <?php if(is_user_logged_in()) { ?>
         <?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Footer') ) : endif; ?>
-    <?php } ?>
     <?php wp_footer(); ?>
 </div>
+<?php } ?>
