@@ -30,11 +30,7 @@ class Television extends ControllerG{
 
     public function insertTelevision(){
         $action = $_POST['createTv'];
-        $years = $this->model->getCodeYear();
-        $groups = $this->model->getCodeGroup();
-        $halfgroups = $this->model->getCodeHalfgroup();
 
-        $this->view->displayFormTelevision($years, $groups, $halfgroups);
         if(isset($action)){
             $login = filter_input(INPUT_POST,'loginTv');
             $pwd = md5(filter_input(INPUT_POST,'pwdTv'));
@@ -83,12 +79,12 @@ class Television extends ControllerG{
 
         if(isset($action)){
             $codes = $_POST['selectTv'];
-            $pwd = $result['user_pass'];
+            $pwd = $result->user_pass;
             if(isset($_POST['pwdTv'])){
                 $pwd = $_POST['pwdTv'];
             }
             if($this->model->modifyTv($result, $codes)){
-                wp_set_password( $pwd, $result['ID']);
+                wp_set_password( $pwd, $result->ID);
                 $this->view->displayModificationValidate();
             }
         }

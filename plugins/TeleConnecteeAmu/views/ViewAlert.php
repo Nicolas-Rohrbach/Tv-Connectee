@@ -6,29 +6,29 @@
  * Time: 11:01
  */
 
-class ViewAlert extends ViewG
-{
+class ViewAlert extends ViewG {
 
     public function displaySelect($years, $groups, $halfgroups){
-        echo '<option value="0">Aucun</option>
+        $string = '<option value="0">Aucun</option>
               <option value="all">Tous</option>
                         <optgroup label="Année">';
         foreach ($years as $year) {
 
-            echo '<option value="'.$year['code'].'">'.$year['title'].'</option >';
+            $string .= '<option value="'.$year['code'].'">'.$year['title'].'</option >';
         }
-        echo '</optgroup>
+        $string .= '</optgroup>
                           <optgroup label="Groupe">';
         foreach ($groups as $group){
-            echo '<option value="'.$group['code'].'">'.$group['title'].'</option>';
+            $string .= '<option value="'.$group['code'].'">'.$group['title'].'</option>';
         }
-        echo '</optgroup>
+        $string .= '</optgroup>
                           <optgroup label="Demi groupe">';
         foreach ($halfgroups as $halfgroup){
-            echo '<option value="'.$halfgroup['code'].'">'.$halfgroup['title'].'</option>';
+            $string .= '<option value="'.$halfgroup['code'].'">'.$halfgroup['title'].'</option>';
         }
-        echo '</optgroup>
+        $string .= '</optgroup>
         </select>';
+        return $string;
     }
 
     public function displaySelectModif($years, $groups, $halfgroups, $name){
@@ -59,16 +59,16 @@ class ViewAlert extends ViewG
     public function displayAlertCreationForm($years, $groups, $halfgroups) {
         $dateMin = date('Y-m-d',strtotime("+1 day")); //date minimum pour la date d'expiration
 
-        echo '
+        return '
         <div class="cadre">
             <form id="creationAlert" method="post">
                    Contenu : <input type="text" name="content" required maxlength="280"> <br>
                    Date d\'expiration : <input type="date" name="endDateAlert" min="'.$dateMin.'" required > </br> </br>
                    
                    Année, groupe, demi-groupes concernés : </br>
-                    <select class="form-control firstSelect" name="selectAlert[]" required="">';
-                        $this->displaySelect($years, $groups, $halfgroups);
-        echo'
+                    <select class="form-control firstSelect" name="selectAlert[]" required="">'.
+                        $this->displaySelect($years, $groups, $halfgroups).
+        '
                 <input type="button" onclick="addButtonAlert()" value="+">
                     <input type="submit" value="Publier" name="createAlert">
             </form>

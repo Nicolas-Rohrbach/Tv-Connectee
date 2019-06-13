@@ -23,10 +23,9 @@ class Schedule extends ControllerG
 
     /**
      * Affiche l'emploi du temps demandé
-     * @param $code
-     * @param $force
+     * @param $code     Code ADE de l'emploi du temps
      */
-    public function displaySchedule($code, $force){
+    public function displaySchedule($code){
         global $R34ICS;
         $R34ICS = new R34ICS();
 
@@ -41,34 +40,32 @@ class Schedule extends ControllerG
             'title' => null,
             'view' => 'list',
         );
-        $R34ICS->display_calendar($url, $code, $force, $args);
+        $R34ICS->display_calendar($url, $code, $args);
     }
 
     /**
-     * Affiche l'emploi du temps d'une promo en fonction de l'ID récupéré dans l'url
+     * Affiche l'emploi du temps d'une année en fonction de l'ID récupéré dans l'url
      */
     public function displayYearSchedule(){
         $code = $this->getMyIdUrl();
         if($code == 'emploi-du-temps') {
             $this->view->displaySelectSchedule();
         } else {
-            $force = true;
-            $this->displaySchedule($code, $force);
+            return $this->displaySchedule($code);
         }
     }
 
     /**
-     * Affiche l'emploi du temps de la personne concerné sauf si il s'agit d'une personne qui n'a pas de code ADE lié à son compte
+     * Affiche l'emploi du temps de la personne connectée,
      * @throws Exception
      */
     public function displaySchedules(){
         $current_user = wp_get_current_user();
         if (in_array("television",$current_user->roles) || in_array("etudiant",$current_user->roles) || in_array("enseignant",$current_user->roles)) {
-            $force = true;
             $codes = unserialize($current_user->code);
 
             if(in_array("enseignant",$current_user->roles)) {
-                $this->displaySchedule($codes[0], $force);
+                $this->displaySchedule($codes[0]);
             }
 
             if(in_array("etudiant",$current_user->roles) || in_array("television",$current_user->roles)){
@@ -85,27 +82,33 @@ class Schedule extends ControllerG
                         foreach ($codes as $code) {
                             $path = $this->getFilePath($code);
                             if(file_exists($path)){
-                                $this->displaySchedule($code, $force);
+                                $this->displaySchedule($code);
                                 $this->view->displayMidSlide();
                             }
                         }
                         $this->view->displayEndSlide();
                     } else {
-                        $this->displaySchedule(end($codes), $force);
+                        $this->displaySchedule(end($codes));
                     }
+                } else {
+                    $this->displaySchedule($codes);
                 }
-                else
-                    $this->displaySchedule($codes, $force);
-                }
+            }
         } elseif (in_array("technicien", $current_user->roles)){
             $model = new CodeAdeManager();
             $years = $model->getCodeYear();
-            $force = true;
+            $row = 0;
             foreach ($years as $year){
-                $this->displaySchedule($year['code'], $force);
+                if($row % 2 == 0) {
+                    $this->view->displayRow();
+                }
+                $this->displaySchedule($year['code']);
+                if($row % 2 == 1) {
+                    $this->view->displayEndDiv();
+                }
+                $row = $row + 1;
             }
-        }
-        else {
+        } else {
             $this->view->displayWelcome();
         }
     }

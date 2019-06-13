@@ -9,7 +9,7 @@
 abstract class ViewG{
 
     protected function displayInsertImportFile($name){
-        echo '<a href="/wp-content/plugins/TeleConnecteeAmu/models/Excel/addUsers/ajout'.$name.'s.xlsx"
+        return '<a href="/wp-content/plugins/TeleConnecteeAmu/models/Excel/addUsers/ajout'.$name.'s.xlsx"
                 download="Ajout '.$name.'s.xlsx">Télécharger le fichier Excel ! </a>
              <form id="'.$name.'" method="post" enctype="multipart/form-data">
 				<input type="file" name="excel'.$name.'" class="inpFil" required=""/>
@@ -20,7 +20,7 @@ abstract class ViewG{
     }
 
     protected function displayBaseForm($name){
-        echo '
+        return '
         <div class="cadre">
              <div align="center">
                 <form method="post">
@@ -250,5 +250,13 @@ abstract class ViewG{
         $this->displayStartModal('Erreur lors de l\'inscription ');
         echo '<div class="alert alert-danger"> Le login ou l\'adresse mail est déjà utilisé(e) </div>';
         $this->displayEndModal();
+    }
+
+    public function displayRow(){
+        echo '<div class="row">';
+    }
+
+    public function displayEndDiv(){
+        echo '</div>';
     }
 }

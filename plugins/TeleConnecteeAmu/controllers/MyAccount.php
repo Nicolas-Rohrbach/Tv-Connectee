@@ -84,34 +84,11 @@ class MyAccount extends ControllerG {
             $code = $_POST['codeDelete'];
             $userCode = $this->model->getCode($current_user->ID);
             if($code == $userCode[0]['Code']){
-                if($current_user->roles[0] == 'enseignant' ){
-                    $code = unserialize($current_user->code);
-                    unlink($this->getFilePath($code[0]));
-                }
-                if($current_user->roles[0] == 'enseigant' || $current_user->roles[0] == 'secretaire'){
-                    $modelAlert = new AlertManager();
-                    $modelInfo = new InformationManager();
-                    $result = $this->model->getById($current_user->ID);
-                    $alerts = $modelAlert->getListAlertByAuthor($result[0]['user_login']);
-                    if(isset($alerts)){
-                        foreach ($alerts as $alert) {
-                            $modelAlert->deleteAlertDB($alert['ID_alert']);
-                        }
-                    }
-                    $infos = $modelInfo->getListInformationByAuthor($result[0]['user_login']);
-                    if(isset($infos)){
-                        foreach ($infos as $info) {
-                            $modelInfo->deleteInformationDB($info['ID_info']);
-                        }
-                    }
-                }
                 $this->model->deleteCode($current_user->ID);
-                require_once( ABSPATH.'wp-admin/includes/user.php' );
-                wp_delete_user( $current_user->ID);
+                $this->deleteUser($current_user->ID);
                 $this->view->displayModificationValidate();
-            }
-            else{
-                echo "bad code";
+            } else {
+                $this->view->displayWrongPassword();
             }
         }
     }

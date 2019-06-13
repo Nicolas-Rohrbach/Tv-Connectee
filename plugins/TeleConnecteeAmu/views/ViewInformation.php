@@ -27,12 +27,34 @@ class ViewInformation extends ViewG
      * @param $endDate
      * @param $row
      */
-    public function displayAllInformation($id, $title, $author, $content, $creationDate, $endDate, $row)
+    public function displayAllInformation($id, $title, $author, $content, $type, $creationDate, $endDate, $row)
     {
         $tab = [$title, $author, $content, $creationDate, $endDate];
         $this->displayAll($row, $id, $tab);
+        if($type == 'tab'){
+            $source = $_SERVER['DOCUMENT_ROOT']."/wp-content/plugins/TeleConnecteeAmu/views/media/".$content;
+            if(! file_exists($source)) {
+                echo '<td class="text-center red"> Le ficier n\'exite pas';
+            } else {
+                echo '<td class="text-center">';
+            }
+        } else {
+            if ($type == 'img') {
+                $source = explode('src=', $content);
+                $source = substr($source[1], 0, -1);
+                $source = substr($source, 1, -1);
+                $source = home_url() . $source;
+                if (! getimagesize($source)) {
+                    echo '<td class="text-center red"> Le fichier n\'existe pas ';
+                } else {
+                    echo '<td class="text-center">';
+                }
+            } else {
+                echo '<td class="text-center">';
+            }
+        }
         echo '
-              <td class="text-center"> <a href="/modification-information/' . $id . '" 
+               <a href="/modification-information/' . $id . '" 
               name="modifetud" type="submit" value="Modifier">Modifier</a></td>
             </tr>';
     } // displayAllInformation()
@@ -77,8 +99,7 @@ class ViewInformation extends ViewG
     {
 
         $dateMin = date('Y-m-d', strtotime("+1 day"));
-
-        echo 'Quel type de contenu voulez vous pour votre information ? </br>
+        $string = 'Quel type de contenu voulez vous pour votre information ? </br>
 
               <form method="post">
                 <label> Texte : <input type="radio" name="typeChoice" value="text"></label></br>
@@ -90,14 +111,14 @@ class ViewInformation extends ViewG
 
         $choice = $_POST['typeChoice'];
         if ($choice == 'text') {
-            echo '<form method="post">
+            $string .= '<form method="post">
                         Titre : <input type="text" name="titleInfo" placeholder="Inserer un titre" required maxlength="20"> </br>
                         Date d\'expiration : <input type="date" name="endDateInfo" min="' . $dateMin . '" required ></br>
                         Contenu : <textarea name="contentInfo" maxlength="200"></textarea> </br>
                         <input type="submit" value="creer" name="createText">
                       </form>';
         } elseif ($choice == 'image') {
-            echo '<form method="post" enctype="multipart/form-data">
+            $string .= '<form method="post" enctype="multipart/form-data">
                         Titre : <input type="text" name="titleInfo" placeholder="Inserer un titre" required maxlength="20"> </br>
                         Date d\'expiration : <input type="date" name="endDateInfo" min="' . $dateMin . '" required ></br>
                         Ajouter une image :<input type="file" name="contentFile" /> </br>
@@ -106,7 +127,7 @@ class ViewInformation extends ViewG
                         <input type="submit" value="creer" name="createImg">
                       </form>';
         } elseif ($choice == 'tab') {
-            echo '<form method="post" enctype="multipart/form-data">
+            $string .= '<form method="post" enctype="multipart/form-data">
                         Titre : <input type="text" name="titleInfo" placeholder="Inserer un titre" required maxlength="20"> </br>
                         Date d\'expiration : <input type="date" name="endDateInfo" min="' . $dateMin . '" required ></br>
                         Ajout du fichier Xls (ou xlsx) : <input type="file" name="contentFile" /> </br>
@@ -114,7 +135,8 @@ class ViewInformation extends ViewG
                         <input type="submit" value="creer" name="createTab">
                       </form>';
         }
-        echo '<a href="/gerer-les-informations/"> Page de gestion</a>';
+        $string .= '<a href="/gerer-les-informations/"> Page de gestion</a>';
+        return $string;
     } //displayInformationCreation()
 
 

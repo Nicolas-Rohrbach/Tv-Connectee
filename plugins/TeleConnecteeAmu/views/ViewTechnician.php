@@ -4,7 +4,7 @@
 class ViewTechnician extends ViewG
 {
     public function displayFormTechnician(){
-        $this->displayBaseForm('Tech');
+        return $this->displayBaseForm('Tech');
     }
 
     public function displayHeaderTabTechnician(){

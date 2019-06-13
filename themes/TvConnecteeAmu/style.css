@@ -174,15 +174,23 @@ form button{
         padding: 0;
     }
 
+    #footer-left {
+        width: 100%;
+        bottom: auto;
+        float: none;
+        position: static;
+    }
+
     #content {
-        margin-right: 5%;
-        margin-left: 5%;
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0;
     }
 
     #content-twocolumns {
-        width: 90%;
-        margin-right: 5%;
-        margin-left: 5%;
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0;
     }
 
     img,

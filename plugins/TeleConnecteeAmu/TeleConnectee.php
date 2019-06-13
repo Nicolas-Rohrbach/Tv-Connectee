@@ -7,6 +7,21 @@
  * Author URI: http://tvconnectee.alwaysdata.net/
 */
 
+include_once 'install_DB_Tv.php';
+include_once 'blocks/schedule/schedule.php';
+include_once 'blocks/schedules/schedules.php';
+include_once 'blocks/student/student.php';
+include_once 'blocks/teacher/teacher.php';
+include_once 'blocks/television/television.php';
+include_once 'blocks/secretary/secretary.php';
+include_once 'blocks/technician/technician.php';
+include_once 'blocks/managementUser/managementUser.php';
+include_once 'blocks/alert/alert.php';
+include_once 'blocks/alertManage/alertManage.php';
+include_once 'blocks/information/information.php';
+include_once 'blocks/informationManage/informationManage.php';
+include_once 'blocks/codeAde/codeAde.php';
+
 include_once 'controllers/ControllerG.php';
 include_once 'models/Model.php';
 include_once 'views/ViewG.php';
@@ -65,8 +80,6 @@ include_once 'widgets/WidgetAlert.php';
 require ('models/Excel/vendor/autoload.php');
 
 //Users
-$student = new Student();
-$teacher = new Teacher();
 $television = new Television();
 $secretary = new Secretary();
 $technician = new Technician();
@@ -79,14 +92,8 @@ $managementUsers = new ManagementUsers();
 
 $code = new CodeAde();
 
-$schedule = new Schedule();
-//Function for Schedule
-add_action('displaySchedule',array($schedule,'displaySchedules'));
-add_action('displayYear_schedule', array($schedule, 'displayYearSchedule'));
-
 //All functions for users
-add_action('add_student', array($student, 'insertStudent'), 0, 1);
-add_action('add_teacher', array($teacher, 'insertTeacher'), 0, 1);
+
 add_action('add_television', array($television, 'insertTelevision'), 0, 7);
 add_action('add_secretary', array($secretary, 'insertSecretary'));
 add_action('add_technician',array($technician, 'insertTechnician'));

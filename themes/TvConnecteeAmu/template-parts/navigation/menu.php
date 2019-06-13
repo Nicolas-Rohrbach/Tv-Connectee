@@ -8,7 +8,7 @@ $years = $model->getCodeYear();?>
 <div class="menu" id="myMenu">
     <?php if (!is_user_logged_in()) { ?>
     <a class="menu-item" href="<?php echo site_url('wp-login.php') ?>">CONNEXION</a>
-    <?php } elseif (is_user_logged_in()) { ?>
+    <?php } elseif (is_user_logged_in() && ! in_array("technician", $current_user->roles)) { ?>
     <div class="menu-item_dropdown menu-item">
         <button class="dropbtn">Emploi du temps
             <i class="fa fa-caret-down"></i>

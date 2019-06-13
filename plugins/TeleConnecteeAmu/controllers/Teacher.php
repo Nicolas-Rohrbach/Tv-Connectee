@@ -23,8 +23,8 @@ class Teacher extends ControllerG
      * Insère tout les professeurs depuis un fichier excel
      * @param $actionTeacher
      */
-    public function insertTeacher($actionTeacher){
-        $this->view->displayInsertImportFileTeacher();
+    public function insertTeacher(){
+        $actionTeacher = $_POST['importProf'];
         if ($actionTeacher) {
             $allowed_extension = array("Xls", "Xlsx", "Csv");
             $extension = ucfirst(strtolower(end(explode(".", $_FILES["excelProf"]["name"]))));

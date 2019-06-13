@@ -1,3 +1,10 @@
 .red {
     color:red;
 }
+
+.wp-block-tvconnecteeamu-test {
+    color: darkred;
+    background: #fcc;
+    border: 2px solid #c99;
+    padding: 20px;
+}

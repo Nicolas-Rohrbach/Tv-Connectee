@@ -15,6 +15,6 @@ class StudentManager extends Model{
 
     public function modifyStudent($id, $code){
         $result = $this->getById($id);
-        return $this->modifyUser($id, $result['user_login'], $code);
+        return $this->modifyUser($id, $result[0]['user_login'], $code);
     }
 }

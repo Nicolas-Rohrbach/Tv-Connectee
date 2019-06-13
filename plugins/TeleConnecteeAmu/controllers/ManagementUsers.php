@@ -20,8 +20,8 @@ class ManagementUsers extends ControllerG{
      * Affiche les utilisateurs choisis
      * @param $action
      */
-    public function displayUsers($action){
-        $this->view->displayButtonChoise();
+    public function displayUsers(){
+        $action = $_POST['seeUsers'];
         if($action == "students"){
             $controller = new Student();
             $controller->displayAllStudents();

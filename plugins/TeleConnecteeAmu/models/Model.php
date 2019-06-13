@@ -128,9 +128,8 @@ abstract class Model
 
     protected function modifyUser($id, $login, $codes){
         if ($this->verifyTuple($login)) {
-            $req = $this->getDb()->prepare('UPDATE wp_users SET code=:codes
+            $req = $this->getDb()->prepare('UPDATE wp_users SET code = :codes
                                             WHERE ID=:id');
-
             $serCode = serialize($codes);
             $req->bindParam(':id', $id);
             $req->bindParam(':codes', $serCode);
@@ -278,31 +277,34 @@ abstract class Model
     public function codeNotBound($type = null){
         $users = $this->getUsersByRole('etudiant');
         $allCode = array();
-        foreach ($users as $user){
-            $userCodes = unserialize($user['code']);
-            foreach ($userCodes as $userCode){
-                $allCode[] = $userCode;
+        $usersCodes = array();
+        if(is_array($users)) {
+            foreach ($users as $user){
+                $codes = unserialize($user['code']);
+                $usersCodes[] = $codes[$type];
             }
+        } else {
+            $codes = unserialize($users['code']);
+            $usersCodes[] = $codes[$type];
         }
 
         $codesAde = $this->getAll('code_ade');
-
         $notRegisterCode = array();
         if(isset($codesAde)){
             foreach ($codesAde as $codeAde){
                 $allCode[] = $codeAde['code'];
             }
         }
-        if(isset($userCodes)){
-            if(is_array($userCodes)){
-                foreach ($userCodes as $userCode){
+        if(isset($usersCodes)){
+            if(is_array($usersCodes)){
+                foreach ($usersCodes as $userCode){
                     if(! in_array($userCode, $allCode)) {
                         $notRegisterCode[] = $userCode;
                     }
                 }
             } else {
-                if(! in_array($userCodes, $allCode)) {
-                    $notRegisterCode[] = $userCodes;
+                if(! in_array($usersCodes, $allCode)) {
+                    $notRegisterCode[] = $usersCodes;
                 }
             }
 

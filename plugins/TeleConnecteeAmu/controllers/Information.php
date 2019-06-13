@@ -6,7 +6,7 @@
  * Time: 11:33
  */
 
-class Information {
+class Information extends ControllerG {
     private $DB;
     private $view;
 
@@ -24,14 +24,15 @@ class Information {
      * Supprime les informations sélectionnées dans la page de gestion des informations.
      * @param $action
      */
-    public function deleteInformations($action) {
-        if(isset($action)) {
+    public function deleteInformations() {
+        $actionDelete = $_POST['Delete'];
+        if(isset($actionDelete)) {
             if (isset($_REQUEST['checkboxstatus'])) {
                 $checked_values = $_REQUEST['checkboxstatus'];
                 foreach ($checked_values as $val) {
                     $res = $this->DB->getInformationByID($val);
                     $type = $res['type'];
-                    if($type = "img"){
+                    if($type == "img"){
                         $this->deleteFile($val);
                     }
                     $this->DB->deleteInformationDB($val);
@@ -60,8 +61,11 @@ class Information {
     function informationManagement(){
         $current_user = wp_get_current_user();
         $user = $current_user->user_login;
-        if(in_array("administrator", $current_user->roles)) $result = $this->DB->getListInformation();
-        else $result = $this->DB->getListInformationByAuthor($user);
+        if(in_array("administrator", $current_user->roles)) {
+            $result = $this->DB->getListInformation();
+        } else {
+            $result = $this->DB->getListInformationByAuthor($user);
+        }
 
         echo '<a href="/creer-information/"> Créer une information </a>';
         $this->view->tabHeadInformation();
@@ -72,6 +76,7 @@ class Information {
             $title = $row['title'];
             $author = $row['author'];
             $content = $row['content'];
+            $type = $row['type'];
             $creationDate = $row['creation_date'];
             $endDate = $row['end_date'];
 
@@ -81,7 +86,7 @@ class Information {
             $endDatefr = date("d-m-Y", strtotime($endDate));
             $creationDatefr = date("d-m-Y", strtotime($creationDate));
 
-            $this->view->displayAllInformation($id, $title, $author, $content, $creationDatefr, $endDatefr, ++$i);
+            $this->view->displayAllInformation($id, $title, $author, $content, $type, $creationDatefr, $endDatefr, ++$i);
         }
         $this->view->displayEndTab();
     } // informationManagement()
@@ -91,8 +96,7 @@ class Information {
      * cf snippet Modification Info
      */
     public function modifyInformation() {
-            $urlExpl = explode('/', $_SERVER['REQUEST_URI']);
-            $id = $urlExpl[2];
+            $id = $this->getMyIdUrl();
 
             $actionText = $_POST['validateChange'];
             $actionImg = $_POST['validateChangeImg'];
@@ -176,7 +180,6 @@ class Information {
         $contentList = array();
         $typeList = array();
         foreach ($result as $row) {
-
             $id = $row['ID_info'];
             $title = $row['title'];
             $content = $row['content'];
@@ -184,21 +187,42 @@ class Information {
             $type = $row['type'];
             $this->endDateCheckInfo($id,$endDate);
             if($type == 'tab'){
-                $list = $this->readSpreadSheet($id);
-                foreach ($list as $table) {
+                $source = $_SERVER['DOCUMENT_ROOT']."/wp-content/plugins/TeleConnecteeAmu/views/media/".$content;
+                if(! file_exists($source)) {
                     array_push($idList,$id);
                     array_push($titleList,$title);
-                    array_push($contentList, $table);
+                    array_push($contentList, 'Un beau tableau devrait être ici !');
+                } else {
+                    $list = $this->readSpreadSheet($id);
+                    foreach ($list as $table) {
+                        array_push($idList,$id);
+                        array_push($titleList,$title);
+                        array_push($contentList, $table);
+                    }
                 }
-            }
-            else {
-                array_push($idList,$id);
-                array_push($titleList,$title);
-                array_push($contentList,$content);
+            } else {
+                if($type == 'img'){
+                    $source = explode('src=', $content);
+                    $source = substr($source[1],0,-1);
+                    $source = substr($source,1,-1);
+                    $source = home_url().$source;
+                    if(! getimagesize($source)){
+                        array_push($idList,$id);
+                        array_push($titleList,$title);
+                        array_push($contentList,'Une belle image devrait être ici !');
+                    } else {
+                        array_push($idList,$id);
+                        array_push($titleList,$title);
+                        array_push($contentList,$content);
+                    }
+                } else {
+                    array_push($idList,$id);
+                    array_push($titleList,$title);
+                    array_push($contentList,$content);
+                }
             }
         }
         $this->view->displayInformationView($titleList,$contentList);
-
     } // informationMain()
 
 
@@ -212,13 +236,18 @@ class Information {
      * @param $content
      * @param $endDate
      */
-    public function insertInformation($actionText,$actionImg,$actionTab, $title, $content, $contentFile, $endDate){
+    public function insertInformation(){
+        $actionText = $_POST['createText'];
+        $actionImg = $_POST['createImg'];
+        $actionTab = $_POST['createTab'];
+        $title = filter_input(INPUT_POST,'titleInfo');
+        $content = filter_input(INPUT_POST,'contentInfo');
+        $endDate = filter_input(INPUT_POST,'endDateInfo');
+        $contentFile = $_FILES['contentFile'];
 
-        $this->view->displayInformationCreation();
         if(isset($actionText)) { // si c'est une création de texte
             $this->DB->addInformationDB($title, $content, $endDate,"text");
-        }
-        elseif (isset($actionImg)) { // si c'est une création d'affiche
+        } elseif (isset($actionImg)) { // si c'est une création d'affiche
             //upload le fichier avec un nom temporaire
             $result = $this->uploadFile($contentFile,"create", "img", 0, $title, $endDate);
             if($result != 0) {
@@ -236,8 +265,7 @@ class Information {
                 $content = '<img src="/wp-content/plugins/TeleConnecteeAmu/views/media/'.$id.'.'.$extension_upload.'">';
                 $this->changeContentFile($id, $content);
             }
-        }
-        elseif (isset($actionTab)) { //si c'est une création d'un tableau de note
+        } elseif (isset($actionTab)) { //si c'est une création d'un tableau de note
             $result = $this->uploadFile($contentFile,"create", "tab", 0, $title, $endDate);
             if($result != 0) {
                 $id = $result;
@@ -278,11 +306,11 @@ class Information {
     public function uploadFile($file, $action, $type, $id =0, $title="", $endDate=""){
         if($action == "create"){ //si la fonction a été appelée pour la création d'une info
             $id = "temporary"; //met un id temporaire pour le nom du fichier
-        }
-        elseif ($action == "modify"){ //si la fonction a été appelée pour la modification d'une info
+        } elseif ($action == "modify"){ //si la fonction a été appelée pour la modification d'une info
             $this->deleteFile($id); // efface le fichier correspondant a l'info modifié
+        } else {
+            echo "il y a une erreur dans l'appel de la fonction";
         }
-        else{ echo "il y a une erreur dans l'appel de la fonction";}
 
         $_FILES['file'] = $file;
         $maxsize = 5000000; //5Mo
@@ -296,7 +324,9 @@ class Information {
         if ( in_array($extension_upload,$extensions_valides) ) {
             $nom =  $_SERVER['DOCUMENT_ROOT']."/wp-content/plugins/TeleConnecteeAmu/views/media/{$id}.{$extension_upload}";
             $resultat = move_uploaded_file($_FILES['file']['tmp_name'],$nom);
-        }else { echo "Extension incorrecte <br>";}
+        } else {
+            echo "Extension incorrecte <br>";
+        }
 
         if ($resultat){
             if($action == "create"){
@@ -304,27 +334,27 @@ class Information {
                     // Ajoute dans la BD avec un contenu temporaire
                     $result = $this->DB->addInformationDB($title,"temporary content",$endDate, "img");
                     return $result;
-                }
-                elseif ($type == "tab") {
+                } elseif ($type == "tab") {
                     // Ajoute dans la BD avec un contenu temporaire
                     $result = $this->DB->addInformationDB($title,"temporary content",$endDate, "tab");
                     return $result;
-                }else{echo "le type d'information n'est pas le bon";}
-            }
-            elseif ($action == "modify"){
+                } else {
+                    echo "le type d'information n'est pas le bon";
+                }
+            } elseif ($action == "modify"){
                 if($type == "img") {
                     //renvoie le nouveau contenu de l'info
                     $content = '<img src="/wp-content/plugins/TeleConnecteeAmu/views/media/' . $id . '.' . $extension_upload . '">';
                     return $content;
-                }
-                elseif ($type == "tab"){
+                } elseif ($type == "tab"){
                     //renvoie le nouveau contenu de l'info
                     $content =  $id .'.'. $extension_upload;
                     return $content;
-                }else{echo "le type d'information n'est pas le bon";}
+                } else {
+                    echo "le type d'information n'est pas le bon";
+                }
             }
-        }
-        else {
+        } else {
             echo "le fichier n'as pas été upload <br>";
             return 0;
         }

@@ -16,7 +16,9 @@
     max-height:30ex;
 }
 
-
+.red {
+    color:red;
+}
 
 @media (max-height: 1100px) {
     .titleInfo {

@@ -9,7 +9,7 @@
 class ViewSecretary extends ViewG
 {
     public function displayFormSecretary() {
-        $this->displayBaseForm('Secre');
+        return $this->displayBaseForm('Secre');
     }
 
     public function displayHeaderTabSecretary(){

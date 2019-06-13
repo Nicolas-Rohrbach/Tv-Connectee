@@ -23,26 +23,43 @@ abstract class ControllerG {
      * @param $action
      */
     public function deleteUsers($action){
-        $model = new StudentManager();
-        $modelAlert = new AlertManager();
-        $modelInfo = new InformationManager();
         if(isset($action)){
             if(isset($_REQUEST['checkboxstatus'])) {
                 $checked_values = $_REQUEST['checkboxstatus'];
                 foreach($checked_values as $val) {
-                    $result = $model->getById($val);
-                    $model->deleteUser($val);
-                    $alerts = $modelAlert->getListAlertByAuthor($result[0]['user_login']);
-                    if(isset($alerts)){
-                        foreach ($alerts as $alert) {
-                            $modelAlert->deleteAlertDB($alert['ID_alert']);
+                    $this->deleteUser($val);
+                }
+            }
+        }
+    }
+
+    public function deleteUser($id){
+        $model = new StudentManager();
+        $user = $model->getById($id);
+        $data = get_userdata($id);
+        $model->deleteUser($id);
+        if(in_array("enseignant", $data->roles) == 'enseignant' ){
+            $code = unserialize($user[0]['code']);
+            unlink($this->getFilePath($code[0]));
+        }
+        if(in_array("enseignant", $data->roles) || in_array("secretaire", $data->roles) || in_array("administrator", $data->roles)){
+            $modelAlert = new AlertManager();
+            $modelInfo = new InformationManager();
+            $alerts = $modelAlert->getListAlertByAuthor($user[0]['user_login']);
+            if(isset($alerts)){
+                foreach ($alerts as $alert) {
+                    $modelAlert->deleteAlertDB($alert['ID_alert']);
+                }
+            }
+            if(in_array("secretaire", $data->roles) || in_array("administrator", $data->roles)) {
+                $infos = $modelInfo->getListInformationByAuthor($user[0]['user_login']);
+                if(isset($infos)){
+                    foreach ($infos as $info) {
+                        $type = $info['type'];
+                        if($type == "img" || $type == "") {
+                            $this->deleteFile($info['ID_info']);
                         }
-                    }
-                    $infos = $modelInfo->getListInformationByAuthor($result[0]['user_login']);
-                    if(isset($infos)){
-                        foreach ($infos as $info) {
-                            $modelInfo->deleteInformationDB($info['ID_info']);
-                        }
+                        $modelInfo->deleteInformationDB($info['ID_info']);
                     }
                 }
             }
@@ -56,25 +73,9 @@ abstract class ControllerG {
         file_put_contents(ABSPATH."/wp-content/plugins/TeleConnecteeAmu/fichier.log", $event, FILE_APPEND);
     }
 
-    /**
-     * Renvoie les dates de début et de fin, de l'emploi du temps
-     * @return array
-     */
-    public function getTabConfig(){
-        ### Initialisation
-        $planning = new Planning();
-        ## Récupération de la configuration
-        $conf = $planning->getConf();
-        # On prépare l’export en iCal
-        list($startDay, $startMonth, $startYear) = explode('/', gmdate('d\/m\/Y', $conf['FIRST_WEEK']));
-        list($endDay, $endMonth, $endYear) = explode('/', gmdate('d\/m\/Y', intval($conf['FIRST_WEEK'] + ($conf['NB_WEEKS'] * 7 * 24 * 3600))));
-        $tab = [$startDay, $startMonth, $startYear, $endDay, $endMonth, $endYear];
-        return $tab;
-    }
-
     public  function getUrl($code){
         $str = strtotime("last Monday");
-        $str2 = strtotime(date("Y-m-d", strtotime('last Monday')) . " +4 day");
+        $str2 = strtotime(date("Y-m-d", strtotime('last Monday')) . " +6 day");
         $start =  date('Y-m-d',$str);
         $end = date('Y-m-d',$str2);
         $url = 'https://ade-consult.univ-amu.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?projectId=8&resources=' . $code . '&calType=ical&firstDate='.$start.'&lastDate='.$end;

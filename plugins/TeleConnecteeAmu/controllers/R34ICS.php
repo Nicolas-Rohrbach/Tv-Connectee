@@ -66,7 +66,8 @@ class R34ICS extends ControllerG {
         return $days_of_week;
     }
 
-    public function display_calendar($ics_url, $code, $force_reload=false, $args=array()) {
+    public function display_calendar($ics_url, $code, $args=array()) {
+        $force_reload = true;
         // Get ICS file, from transient if possible
         $transient_name = __METHOD__ . '_' . sha1($ics_url);
         $ics_contents = null;
@@ -264,21 +265,17 @@ class R34ICS extends ControllerG {
             }
             // Sort events and remove out-of-range dates
             foreach (array_keys((array)$ics_data['events']) as $date) {
-                switch (@$args['view']) {
-                    case 'list':
-                        $first_date = date_i18n('Ymd');
-                        break;
-                    case 'month':
-                    default:
-                        $first_date = date_i18n('Ymd', mktime(0,0,0,date_i18n('n'),1,date_i18n('Y')));
-                        break;
-                }
+                $first_date = date_i18n('Ymd');
                 $limit_date = date_i18n('Ymd', mktime(0,0,0,date_i18n('n'),date_i18n('j')+$this->limit_days,date_i18n('Y')));
-                if($date < $first_date || $date > $limit_date) { unset($ics_data['events'][$date]); }
-                else { ksort($ics_data['events'][$date]); }
+                if($date < $first_date || $date > $limit_date) {
+                    unset($ics_data['events'][$date]);
+                } else {
+                    ksort($ics_data['events'][$date]);
+                }
             }
-            if(isset($ics_data['events']))
+            if(isset($ics_data['events'])) {
                 ksort($ics_data['events']);
+            }
 
             // Split events into year/month/day groupings and determine earliest and latest dates along the way
             foreach ((array)$ics_data['events'] as $date => $events) {
@@ -308,16 +305,7 @@ class R34ICS extends ControllerG {
             $current_user = wp_get_current_user();
             $title = $current_user->user_login;
         }
-
-        // Render template
-        switch(@$args['view']) {
-            case 'list':
-                $this->view->displaySchedule($ics_data, $title);
-            case 'month':
-            default:
-                include(dirname(__FILE__) . '/fileR34ICS/templates/calendar-month.php');
-                break;
-        }
+        $this->view->displaySchedule($ics_data, $title);
     }
 
     public function first_dow($date=null) {

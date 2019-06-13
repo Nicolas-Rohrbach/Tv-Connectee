@@ -35,7 +35,6 @@ class Student extends ControllerG
      */
     public function insertStudent() {
         $actionStudent = $_POST['importEtu'];
-        $this->view->displayInsertImportFileStudent();
         if ($actionStudent) {
             $allowed_extension = array("Xls", "Xlsx", "Csv");
             $extension = ucfirst(strtolower(end(explode(".", $_FILES["excelEtu"]["name"]))));
@@ -163,13 +162,14 @@ class Student extends ControllerG
         $this->view->displayModifyStudent($result, $years, $groups, $halfgroups);
 
         $action = $_POST['modifvalider'];
-        $year = filter_input(INPUT_POST,'modifYear');
-        $group = filter_input(INPUT_POST,'modifGroup');
-        $halfgroup = filter_input(INPUT_POST,'modifHalfgroup');
 
-        $codes = [$year, $group, $halfgroup];
         if($action == 'Valider'){
-            if($this->model->modifyStudent($result['ID'], $codes)){
+            $year = filter_input(INPUT_POST,'modifYear');
+            $group = filter_input(INPUT_POST,'modifGroup');
+            $halfgroup = filter_input(INPUT_POST,'modifHalfgroup');
+
+            $codes = [$year, $group, $halfgroup];
+            if($this->model->modifyStudent($result->ID, $codes)){
                 $this->view->displayModificationValidate();
             }
         }

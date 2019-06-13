@@ -6,7 +6,7 @@ class ViewICS extends ViewG
     public function displaySchedule($ics_data, $title){
         $current_user = wp_get_current_user();
         if( in_array("technicien", $current_user->roles)){
-            echo '<div class="technician">';
+            echo '<div class="col-sm-6">';
         }
         echo '<h1>'.$title.'</h1>';
         // Empty calendar message
@@ -90,9 +90,14 @@ class ViewICS extends ViewG
                                                 echo '</td>';
                                             }
                                             if(! in_array("technicien", $current_user->roles)) {
+                                                $oldEvent = $event['label'];
+                                                $subEvent = substr($oldEvent, -3);
+                                                if($subEvent == "alt"){
+                                                    $oldEvent = substr($oldEvent,0, -3);
+                                                }
                                                 echo '<td class="text-center" width="35%">
-                                                    <span class="title">'; echo str_replace('/', '/<wbr />',$event['label']).'</span>';
-                                                //
+                                                    <span class="title">'; echo str_replace('/', '/<wbr />',$oldEvent).'</span>';
+
                                                 if (!empty($event['sublabel'])) {
                                                     echo '<span class="sublabel">';
                                                     if (empty($event['start']) && !empty($event['end'])) {
@@ -115,7 +120,7 @@ class ViewICS extends ViewG
                                         }
                                         echo '</tr>';
                                     }
-                                    if ($nbevents == 5){
+                                    if ($nbevents == 8){
                                         break(2);
                                     }
                                 }

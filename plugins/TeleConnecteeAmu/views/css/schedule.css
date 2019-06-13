@@ -26,11 +26,13 @@
 
 .technician {
     float: left;
-    margin-right: 5%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
     width: 40% !important;
 }
 
-@media (max-width: 1000px) {
-
-
+@media (max-width: 640px) {
+    .technician {
+        width: 100%;
+    }
 }

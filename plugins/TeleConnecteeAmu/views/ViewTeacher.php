@@ -12,7 +12,7 @@ class ViewTeacher extends ViewG
      * Display the input for read a file
      */
     public function displayInsertImportFileTeacher() {
-        $this->displayInsertImportFile("Prof");
+        return $this->displayInsertImportFile("Prof");
     }
 
     /**

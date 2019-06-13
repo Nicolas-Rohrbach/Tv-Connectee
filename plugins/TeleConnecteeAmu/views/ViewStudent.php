@@ -9,7 +9,7 @@
 class ViewStudent extends ViewG
 {
     public function displayInsertImportFileStudent() {
-        $this->displayInsertImportFile("Etu");
+        return $this->displayInsertImportFile("Etu");
     }
 
     public function displayTabHeadStudent(){

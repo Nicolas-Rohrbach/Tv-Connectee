@@ -9,28 +9,29 @@
 class ViewTelevision extends ViewG{
 
     public function displaySelect($years, $groups, $halfgroups){
-        echo '<option value="0">Aucun</option>
+        $string = '<option value="0">Aucun</option>
                         <optgroup label="Année">';
                     foreach ($years as $year) {
 
-                        echo '<option value="'.$year['code'].'">'.$year['title'].'</option >';
+                        $string .= '<option value="'.$year['code'].'">'.$year['title'].'</option >';
                     }
-                    echo '</optgroup>
+                    $string .= '</optgroup>
                           <optgroup label="Groupe">';
                     foreach ($groups as $group){
-                        echo '<option value="'.$group['code'].'">'.$group['title'].'</option>';
+                        $string .= '<option value="'.$group['code'].'">'.$group['title'].'</option>';
                     }
-                    echo '</optgroup>
+                    $string .= '</optgroup>
                           <optgroup label="Demi groupe">';
                     foreach ($halfgroups as $halfgroup){
-                        echo '<option value="'.$halfgroup['code'].'">'.$halfgroup['title'].'</option>';
+                        $string .= '<option value="'.$halfgroup['code'].'">'.$halfgroup['title'].'</option>';
                     }
-                    echo '</optgroup>
+                    $string .= '</optgroup>
                     </select>';
+                    return $string;
     }
 
     public function displayFormTelevision($years, $groups, $halfgroups) {
-        echo '
+        return '
          <div class="cadre">
             <div align="center">
                 <form method="post" id="registerTvForm">
@@ -39,10 +40,8 @@ class ViewTelevision extends ViewG{
                     <label for="pwdTv">Mot de passe</label>
                     <input type="password" class="form-control text-center modal-sm" name="pwdTv" placeholder="Mot de passe" required="">
                     <label>Premier emploi du temps</label>
-                    <select class="form-control firstSelect" name="selectTv[]" required="">';
-        $this->displaySelect($years, $groups, $halfgroups);
-
-        echo'
+                    <select class="form-control firstSelect" name="selectTv[]" required="">'.
+        $this->displaySelect($years, $groups, $halfgroups). '
                 <input type="button" onclick="addButtonTv()" value="Ajouter des emplois du temps">
                     <button type="submit" name="createTv">Créer</button>
                 </form>

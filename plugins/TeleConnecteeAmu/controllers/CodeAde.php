@@ -33,7 +33,6 @@ class CodeAde extends ControllerG
      * Lorsque le bouton est préssé, le controller appel le model pour pouvoir insérer le code écrit
      */
     public function insertCode(){
-        $this->view->displayFormAddCode();
         $badCodesYears = $this->model->codeNotBound(0);
         $badCodesGroups = $this->model->codeNotBound(1);
         $badCodesHalfgroups = $this->model->codeNotBound(2);

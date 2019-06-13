@@ -24,8 +24,9 @@ class Alert
      * @param $action
      * @see alertsManagement()
      */
-    public function deleteAlert($action) {
-        if(isset($action)) {
+    public function deleteAlert() {
+        $actionDelete = $_POST['Delete'];
+        if(isset($actionDelete)) {
             if (isset($_REQUEST['checkboxstatus'])) {
                 $checked_values = $_REQUEST['checkboxstatus'];
                 foreach ($checked_values as $val) {
@@ -44,18 +45,60 @@ class Alert
      * @param $content
      * @param $endDate
      */
-    public function createAlert($action, $content, $endDate){
-        $years = $this->DB->getCodeYear();
-        $groups = $this->DB->getCodeGroup();
-        $halfgroups = $this->DB->getCodeHalfgroup();
+    public function createAlert(){
+        $action = $_POST['createAlert'];
+        $content = filter_input(INPUT_POST,'content');
+        $endDate = $_POST['endDateAlert'];
 
-        $this->view->displayAlertCreationForm($years, $groups, $halfgroups);
         if(isset($action)) {
             $codes = serialize($_POST['selectAlert']);
 
             $this->DB->addAlertDB($content, $endDate, $codes);
         }
+
     } //createAlert()
+
+    public function sendAlert($id){
+
+        $alertCodes = $this->DB->getListCodes($id);
+        $codes = unserialize($alertCodes['codes']);
+
+        $alertListCodes = array();
+        if(is_array($codes)){
+            foreach ($codes as $code) {
+                array_push($alertListCodes,$code);
+                echo '</br> code de l\'alerte :' .$code .'</br>';
+            }
+        } else {
+            array_push($alertListCodes, $codes);
+        }
+
+        $students = $this->DB->getUsersByRole("etudiant");
+        $userListCodes = array();
+        //$userLoginListToSend = array();
+        foreach ($students as $student) {
+            $codesUser = unserialize($student['code']);
+            echo 'etudiant : '. $student['user_login'];
+        }
+
+//            if(is_array($codesUser)){
+//                foreach ($codes as $code) {
+//                    array_push($userListCodes,$code);
+//                    echo $code.'</br>';
+//                }
+//            } else {
+//                array_push($userListCodes, $codes);
+//            }
+//            if(in_array($userListCodes, $alertListCodes)){
+//
+//                array_push($userLoginListToSend,$student['user_login']);
+//            }
+////            echo $student['user_login'] . ' ';
+//        }
+//
+//        $userLoginListToSend = array_unique($userLoginListToSend);
+
+    }
 
     /**
      * Affiche un tableau avec toutes les alertes et des boutons de modification ainsi qu'un bouton de suppression.
@@ -183,14 +226,16 @@ class Alert
             $content .= "&emsp;&emsp;&emsp;&emsp;";
             array_push($contentList, $content);
         }
-
         $this->view->displayAlertMain($contentList);
 
     } // alertMain()
 
 
 
-function sendMessage() {
+// ONESIGNAL NOTIFICATIONS PUSH
+
+function sendMessage($login) {
+
     $content      = array(
         "en" => 'Ceci est une alerte test'
     );
@@ -204,7 +249,8 @@ function sendMessage() {
             "foo" => "bar"
         ),
         'contents' => $content,
-        'web_buttons' => $hashes_array
+        'web_buttons' => $hashes_array,
+        'filters' => array(array("field" => "tag", "key" => "login", "relation" => "=", "value" => $login))
     );
 
     $fields = json_encode($fields);
@@ -231,10 +277,11 @@ function sendMessage() {
 
     public function test(){
 
-        echo 'bienvenue sur la page de test </br>
-        <a href="#" id="my-notification-button" style="display: none;">Subscribe to Notifications</a>';
-        $this->sendMessage();
-
+        echo 'bienvenue sur la page de test  ! </br>
+               
+         <a href="#" id="my-notification-button" style="display: none;">recevoirNotifications</a>';
+        //$this->sendMessage("Lea");
+        $this->sendAlert(2);
 
     }
 }

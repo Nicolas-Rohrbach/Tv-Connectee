@@ -12,7 +12,7 @@ class ViewCodeAde extends ViewG
      * Display a form for create a new ADE code with a title and a type
      */
     public function displayFormAddCode(){
-        echo '
+        return '
          <div class="cadre">
              <div align="center">
                 <form method="post">
@@ -20,9 +20,12 @@ class ViewCodeAde extends ViewG
                     <input type="text" class="form-control text-center modal-sm" name="titleAde" placeholder="Titre" required="">
                     <label for="codeAde">Code ADE</label>
                     <input type="text" class="form-control text-center modal-sm" name="codeAde" placeholder="Code ADE" required="">
-                    <input type="radio" name="typeCode" value="Annee"> Année 
-                    <input type="radio" name="typeCode" value="Groupe"> Groupe
-                    <input type="radio" name="typeCode" value="Demi-groupe"> Demi-Groupe
+                    <label for="Annee">Année</label>
+                    <input type="radio" name="typeCode" id="Annee" value="Annee"> 
+                    <label for="Groupe">Groupe</label>
+                    <input type="radio" name="typeCode" id="Groupe" value="Groupe">
+                    <label for="Demi-groupe">Demi-groupe</label>
+                    <input type="radio" name="typeCode" id="Demi-groupe" value="Demi-groupe">
                     <br/>
                   <button type="submit" name="addCode" value="Valider">Ajouter</button>
                 </form>
